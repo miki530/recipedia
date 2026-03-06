@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/recipe.dart';
 
-const _kStorageKey = 'przepisnik_recipes';
+const _kStorageKey = 'recipedia_recipes';
 
 class RecipesProvider extends ChangeNotifier {
   List<Recipe> _recipes = [];

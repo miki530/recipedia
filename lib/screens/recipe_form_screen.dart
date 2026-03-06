@@ -637,9 +637,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     VoidCallback? onSubmit,
     TextEditingController? controller,
   }) {
-    final ctrl = controller ?? TextEditingController(text: value);
-    return TextField(
-      controller: ctrl,
+    return TextFormField(
+      controller: controller,
+      initialValue: controller == null ? value : null,
       maxLines: maxLines,
       style: const TextStyle(fontSize: 13, color: kTextDark),
       decoration: InputDecoration(
@@ -658,19 +658,25 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         fillColor: Colors.white,
       ),
       onChanged: onChanged,
-      onSubmitted: (_) => onSubmit?.call(),
+      onFieldSubmitted: (_) => onSubmit?.call(),
     );
   }
 
   Widget _numberField(String label, int value, ValueChanged<int> onChanged) {
-    final ctrl = TextEditingController(text: value.toString());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, color: kTextBrown, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: kTextBrown,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         const SizedBox(height: 6),
-        TextField(
-          controller: ctrl,
+        TextFormField(
+          initialValue: value.toString(),
           keyboardType: TextInputType.number,
           style: const TextStyle(fontSize: 14, color: kTextDark),
           decoration: InputDecoration(
@@ -686,7 +692,12 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             filled: true,
             fillColor: Colors.white,
           ),
-          onChanged: (v) => onChanged(int.tryParse(v) ?? value),
+          onChanged: (v) {
+            final parsed = int.tryParse(v);
+            if (parsed != null) {
+              onChanged(parsed);
+            }
+          },
         ),
       ],
     );

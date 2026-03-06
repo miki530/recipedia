@@ -15,11 +15,11 @@ void main() {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(const PrzepisnikApp());
+  runApp(const RecipediaApp());
 }
 
-class PrzepisnikApp extends StatelessWidget {
-  const PrzepisnikApp({super.key});
+class RecipediaApp extends StatelessWidget {
+  const RecipediaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class PrzepisnikApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ShoppingListProvider()),
       ],
       child: MaterialApp(
-        title: 'Przepiśnik',
+        title: 'Recipedia',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

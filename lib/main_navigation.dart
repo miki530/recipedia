@@ -37,7 +37,7 @@ class _MainNavigationState extends State<MainNavigation> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(top: BorderSide(color: kCardBorder, width: 1)),
+          border: const Border(top: BorderSide(color: kCardBorder, width: 1)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.06),

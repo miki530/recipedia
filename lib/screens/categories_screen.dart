@@ -158,14 +158,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                       border: Border.all(color: kCardBorder),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
-                        const Icon(Icons.info_outline, size: 16, color: kOrangeMid),
-                        const SizedBox(width: 8),
+                        Icon(Icons.info_outline, size: 16, color: kOrangeMid),
+                        SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Kategorie używane w przepisach nie mogą być usunięte.',
-                            style: const TextStyle(fontSize: 11, color: kTextMuted),
+                            style: TextStyle(fontSize: 11, color: kTextMuted),
                           ),
                         ),
                       ],
@@ -174,9 +174,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
                   // Category list
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
-                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
                       border: Border(
                         left: BorderSide(color: kCardBorder),
                         right: BorderSide(color: kCardBorder),
@@ -184,11 +184,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       ),
                     ),
                     child: categories.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 40),
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
                             child: Center(
                               child: Column(
-                                children: const [
+                                children: [
                                   Icon(Icons.label_outline, size: 32, color: kOrangeMid),
                                   SizedBox(height: 8),
                                   Text('Brak kategorii', style: TextStyle(color: kTextMuted)),
@@ -252,7 +252,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ? const Color(0xFFFFF8F0)
                 : Colors.white,
         border: Border(
-          bottom: isLast ? BorderSide.none : BorderSide(color: kCardBorder),
+          bottom: isLast ? BorderSide.none : const BorderSide(color: kCardBorder),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

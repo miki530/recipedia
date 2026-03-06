@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/shopping_item.dart';
 
-const _kStorageKey = 'przepisnik_shopping_list';
+const _kStorageKey = 'recipedia_shopping_list';
 
 class ShoppingListProvider extends ChangeNotifier {
   List<ShoppingItem> _items = [];

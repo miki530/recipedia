@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../theme/app_colors.dart';
@@ -309,8 +308,8 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
               border: Border.all(color: kOrangeBorder, width: 2, style: BorderStyle.solid),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Column(
-              children: const [
+            child: const Column(
+              children: [
                 Icon(Icons.upload_outlined, color: kOrangeMid),
                 SizedBox(height: 6),
                 Text('Kliknij, aby wybrać plik',
@@ -334,8 +333,8 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
             color: kOrangeLight,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.link, size: 16, color: kOrange),
               SizedBox(width: 8),
               Expanded(

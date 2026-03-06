@@ -291,7 +291,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: groupItems.length,
-                        separatorBuilder: (_, __) => Divider(height: 1, color: kCardBorder),
+                        separatorBuilder: (_, __) => const Divider(height: 1, color: kCardBorder),
                         itemBuilder: (context, index) {
                           final item = groupItems[index];
                           return _buildItem(context, item, provider);

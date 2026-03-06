@@ -37,9 +37,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     final recipe = recipesProvider.getRecipe(widget.recipeId);
 
     if (recipe == null) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: kBgLight,
-        body: const Center(child: Text('Przepis nie znaleziony')),
+        body: Center(child: Text('Przepis nie znaleziony')),
       );
     }
 

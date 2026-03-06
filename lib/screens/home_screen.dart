@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(width: 10),
                 const Text(
-                  'Przepiśnik',
+                  'Recipedia',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -136,16 +136,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Hero text
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Twoje przepisy',
+                            Text('Twoje przepisy',
                                 style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700,
                                     color: kTextDark)),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2),
                             Text('Przeglądaj, szukaj i gotuj!',
                                 style: TextStyle(fontSize: 14, color: kTextMuted)),
                           ],

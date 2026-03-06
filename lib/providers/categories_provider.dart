@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _kStorageKey = 'przepisnik_categories';
+const _kStorageKey = 'recipedia_categories';
 
 const List<String> kDefaultCategories = [
   'Śniadanie', 'Obiad', 'Kolacja', 'Zupa', 'Sałatka', 'Deser', 'Przekąska', 'Inne',

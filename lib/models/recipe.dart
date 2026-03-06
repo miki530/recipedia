@@ -101,7 +101,7 @@ class Recipe {
 }
 
 final List<Recipe> sampleRecipes = [
-  Recipe(
+  const Recipe(
     id: '1',
     title: 'Spaghetti Bolognese',
     description:
@@ -135,7 +135,7 @@ final List<Recipe> sampleRecipes = [
     tags: ['włoskie', 'pasta', 'mięso'],
     isFavorite: true,
   ),
-  Recipe(
+  const Recipe(
     id: '2',
     title: 'Zupa pomidorowa',
     description:
@@ -167,7 +167,7 @@ final List<Recipe> sampleRecipes = [
     tags: ['polska', 'zupa', 'wegetariańska'],
     isFavorite: false,
   ),
-  Recipe(
+  const Recipe(
     id: '3',
     title: 'Ciasto czekoladowe',
     description:
@@ -199,7 +199,7 @@ final List<Recipe> sampleRecipes = [
     tags: ['czekolada', 'ciasto', 'deser'],
     isFavorite: true,
   ),
-  Recipe(
+  const Recipe(
     id: '4',
     title: 'Sałatka z grillowanym kurczakiem',
     description:
@@ -231,7 +231,7 @@ final List<Recipe> sampleRecipes = [
     tags: ['zdrowe', 'kurczak', 'fit'],
     isFavorite: false,
   ),
-  Recipe(
+  const Recipe(
     id: '5',
     title: 'Naleśniki z dżemem',
     description:
