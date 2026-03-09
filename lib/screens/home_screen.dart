@@ -292,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         (context, index) {
                       final recipe = filtered[index];
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 25), // ostepmiedzy kartami
+                        padding: const EdgeInsets.only(bottom: 15, top: 10), // ostepmiedzy kartami
                         child: RecipeCard(
                           recipe: recipe,
                           onToggleFavorite: () =>

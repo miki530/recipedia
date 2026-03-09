@@ -84,28 +84,29 @@ class FavoritesScreen extends StatelessWidget {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final recipe = favorites[index];
-                    return RecipeCard(
-                      recipe: recipe,
-                      onToggleFavorite: () =>
-                          context.read<RecipesProvider>().toggleFavorite(recipe.id),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (_) => RecipeDetailScreen(recipeId: recipe.id)),
-                      ),
-                    );
-                  },
-                  childCount: favorites.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 320,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.72,
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              sliver: SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final recipe = favorites[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 15, top: 10), // ostepmiedzy kartami
+                        child: RecipeCard(
+                          recipe: recipe,
+                          onToggleFavorite: () =>
+                              context.read<RecipesProvider>().toggleFavorite(recipe.id),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    childCount: favorites.length,
+                  ),
                 ),
               ),
             ),
