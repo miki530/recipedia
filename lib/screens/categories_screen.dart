@@ -260,7 +260,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         children: [
           const Icon(Icons.drag_handle, size: 18, color: Color(0xFFD6C4BB)),
           const SizedBox(width: 10),
-          Text(categoryEmoji(cat), style: const TextStyle(fontSize: 18)),
           const SizedBox(width: 10),
           if (isEditing)
             Expanded(

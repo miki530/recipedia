@@ -122,7 +122,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${categoryEmoji(recipe.category)} ${recipe.category}',
+                      recipe.category,
                       style: const TextStyle(
                           fontSize: 12, color: Color(0xFFC2410C), fontWeight: FontWeight.w600),
                     ),

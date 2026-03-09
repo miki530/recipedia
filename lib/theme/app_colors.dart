@@ -50,20 +50,6 @@ Color difficultyBg(String difficulty) {
   }
 }
 
-String categoryEmoji(String category) {
-  const emojis = {
-    'Śniadanie': '🌅',
-    'Obiad': '🍽️',
-    'Kolacja': '🌙',
-    'Deser': '🍰',
-    'Przekąska': '🥨',
-    'Zupa': '🍲',
-    'Sałatka': '🥗',
-    'Inne': '🍴',
-  };
-  return emojis[category] ?? '🍴';
-}
-
 BoxDecoration orangeButtonDecoration({double radius = 12}) => BoxDecoration(
       gradient: kOrangeGradient,
       borderRadius: BorderRadius.circular(radius),

@@ -78,7 +78,7 @@ class RecipeCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          '${categoryEmoji(recipe.category)} ${recipe.category}',
+                          recipe.category,
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,

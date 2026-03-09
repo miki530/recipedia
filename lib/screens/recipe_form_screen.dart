@@ -299,7 +299,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                           width: 24,
                           height: 24,
                           margin: const EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: kOrangeLight,
                             shape: BoxShape.circle,
                           ),
