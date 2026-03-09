@@ -155,24 +155,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Tags
-                  if (recipe.tags.isNotEmpty) ...[
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: recipe.tags.map((tag) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: kOrangeLight,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text('#$tag',
-                            style: const TextStyle(fontSize: 11, color: Color(0xFFC2410C))),
-                      )).toList(),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-
                   // Action buttons
                   Row(
                     children: [

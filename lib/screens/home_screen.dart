@@ -35,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
       list = list.where((r) {
         return r.title.toLowerCase().contains(q) ||
             r.description.toLowerCase().contains(q) ||
-            r.tags.any((t) => t.toLowerCase().contains(q)) ||
             r.ingredients.any((i) => i.toLowerCase().contains(q));
       }).toList();
     }

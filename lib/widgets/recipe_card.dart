@@ -171,30 +171,6 @@ class RecipeCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Tags
-                  if (recipe.tags.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: recipe.tags.take(3).map((tag) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: kOrangeLight,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '#$tag',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Color(0xFFC2410C),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
                 ],
               ),
             ),

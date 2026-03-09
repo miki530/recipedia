@@ -57,7 +57,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         _ingredients = List.from(recipe.ingredients);
         _steps = List.from(recipe.steps);
         _image = recipe.image;
-        _tags = List.from(recipe.tags);
         _isFavorite = recipe.isFavorite;
       });
     }
@@ -101,7 +100,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       steps: _steps.where((s) => s.trim().isNotEmpty).toList(),
       image: _image,
       createdAt: DateTime.now().toIso8601String(),
-      tags: _tags,
       isFavorite: _isFavorite,
     );
 

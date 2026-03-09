@@ -11,7 +11,6 @@ class Recipe {
   final List<String> steps;
   final String image;
   final String createdAt;
-  final List<String> tags;
   final bool isFavorite;
 
   const Recipe({
@@ -27,7 +26,6 @@ class Recipe {
     required this.steps,
     required this.image,
     required this.createdAt,
-    required this.tags,
     required this.isFavorite,
   });
 
@@ -44,7 +42,6 @@ class Recipe {
     List<String>? steps,
     String? image,
     String? createdAt,
-    List<String>? tags,
     bool? isFavorite,
   }) {
     return Recipe(
@@ -60,7 +57,6 @@ class Recipe {
       steps: steps ?? this.steps,
       image: image ?? this.image,
       createdAt: createdAt ?? this.createdAt,
-      tags: tags ?? this.tags,
       isFavorite: isFavorite ?? this.isFavorite,
     );
   }
@@ -78,7 +74,6 @@ class Recipe {
         'steps': steps,
         'image': image,
         'createdAt': createdAt,
-        'tags': tags,
         'isFavorite': isFavorite,
       };
 
@@ -95,7 +90,6 @@ class Recipe {
         steps: List<String>.from(json['steps'] as List),
         image: json['image'] as String,
         createdAt: json['createdAt'] as String,
-        tags: List<String>.from(json['tags'] as List),
         isFavorite: json['isFavorite'] as bool,
       );
 }
@@ -132,7 +126,6 @@ final List<Recipe> sampleRecipes = [
       'Podaj sos na spaghetti, posyp parmezanem i świeżą bazylią.',
     ],
     createdAt: '2024-01-15T10:00:00Z',
-    tags: ['włoskie', 'pasta', 'mięso'],
     isFavorite: true,
   ),
   const Recipe(
@@ -164,7 +157,6 @@ final List<Recipe> sampleRecipes = [
       'Podgrzewaj jeszcze 5 minut, podaj z pieczywem.',
     ],
     createdAt: '2024-01-20T14:00:00Z',
-    tags: ['polska', 'zupa', 'wegetariańska'],
     isFavorite: false,
   ),
   const Recipe(
@@ -196,7 +188,6 @@ final List<Recipe> sampleRecipes = [
       'Ostudź, udekoruj bitą śmietaną.',
     ],
     createdAt: '2024-02-01T16:00:00Z',
-    tags: ['czekolada', 'ciasto', 'deser'],
     isFavorite: true,
   ),
   const Recipe(
@@ -228,7 +219,6 @@ final List<Recipe> sampleRecipes = [
       'Ułóż sałatę, warzywa, kurczaka, polej dressingiem.',
     ],
     createdAt: '2024-02-10T12:00:00Z',
-    tags: ['zdrowe', 'kurczak', 'fit'],
     isFavorite: false,
   ),
   const Recipe(
@@ -260,7 +250,6 @@ final List<Recipe> sampleRecipes = [
       'Podawaj z dżemem posypane cukrem pudrem.',
     ],
     createdAt: '2024-02-15T08:00:00Z',
-    tags: ['śniadanie', 'szybkie', 'słodkie'],
     isFavorite: false,
   ),
 ];
