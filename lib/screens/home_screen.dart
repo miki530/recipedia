@@ -284,29 +284,29 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _buildEmptyState())
           else
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final recipe = filtered[index];
-                    return RecipeCard(
-                      recipe: recipe,
-                      onToggleFavorite: () =>
-                          context.read<RecipesProvider>().toggleFavorite(recipe.id),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              sliver: SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final recipe = filtered[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 25), // ostepmiedzy kartami
+                        child: RecipeCard(
+                          recipe: recipe,
+                          onToggleFavorite: () =>
+                              context.read<RecipesProvider>().toggleFavorite(recipe.id),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  childCount: filtered.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 320,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.72,
+                      );
+                    },
+                    childCount: filtered.length,
+                  ),
                 ),
               ),
             ),
