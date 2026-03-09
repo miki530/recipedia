@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import '../providers/recipes_provider.dart';
 import '../providers/categories_provider.dart';
@@ -75,15 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             pinned: false,
             title: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    gradient: kOrangeGradient,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.restaurant, size: 20, color: Colors.white),
-                ),
+                SvgPicture.asset('assets/logo.svg', width: 36, height: 36),
                 const SizedBox(width: 10),
                 const Text(
                   'Recipedia',

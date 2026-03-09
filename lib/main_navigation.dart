@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'providers/shopping_list_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'screens/shopping_list_screen.dart';
 import 'screens/categories_screen.dart';
+import 'screens/settings_screen.dart';
 import 'theme/app_colors.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -22,6 +24,7 @@ class _MainNavigationState extends State<MainNavigation> {
     FavoritesScreen(),
     ShoppingListScreen(),
     CategoriesScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -57,6 +60,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 _navItem(1, Icons.favorite_border, Icons.favorite, 'Ulubione'),
                 _navItemBadge(2, Icons.shopping_cart_outlined, Icons.shopping_cart, 'Zakupy', pendingCount),
                 _navItem(3, Icons.label_outline, Icons.label, 'Kategorie'),
+                _navItem(4, Icons.settings_outlined, Icons.settings, 'Ustawienia'),
               ],
             ),
           ),
@@ -71,8 +75,7 @@ class _MainNavigationState extends State<MainNavigation> {
       child: GestureDetector(
         onTap: () => setState(() => _currentIndex = index),
         behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+        child: Container(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
           decoration: BoxDecoration(
             color: active ? const Color(0xFFFFF0E6) : Colors.transparent,
@@ -108,8 +111,7 @@ class _MainNavigationState extends State<MainNavigation> {
       child: GestureDetector(
         onTap: () => setState(() => _currentIndex = index),
         behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+        child: Container(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
           decoration: BoxDecoration(
             color: active ? const Color(0xFFFFF0E6) : Colors.transparent,
