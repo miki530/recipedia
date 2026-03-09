@@ -40,6 +40,7 @@ class CategoriesProvider extends ChangeNotifier {
   bool addCategory(String name) {
     final trimmed = name.trim();
     if (trimmed.isEmpty) return false;
+    if (trimmed.length > 15) return false;
     if (_categories.any((c) => c.toLowerCase() == trimmed.toLowerCase())) return false;
     _categories.add(trimmed);
     notifyListeners();
@@ -50,6 +51,7 @@ class CategoriesProvider extends ChangeNotifier {
   bool editCategory(String oldName, String newName) {
     final trimmed = newName.trim();
     if (trimmed.isEmpty) return false;
+    if (trimmed.length > 15) return false;
     if (_categories.any((c) => c.toLowerCase() == trimmed.toLowerCase() && c != oldName)) return false;
     final idx = _categories.indexOf(oldName);
     if (idx != -1) {

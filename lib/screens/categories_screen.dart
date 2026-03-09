@@ -416,6 +416,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       setState(() => _addError = 'Podaj nazwę kategorii');
       return;
     }
+    if (name.length > 15) {
+      setState(() => _addError = 'Nazwa nie może mieć więcej niż 15 znaków');
+      return;
+    }
     final ok = provider.addCategory(name);
     if (!ok) {
       setState(() => _addError = 'Taka kategoria już istnieje');
@@ -430,6 +434,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final newName = _editController.text.trim();
     if (newName.isEmpty) {
       setState(() => _editError = 'Nazwa nie może być pusta');
+      return;
+    }
+    if (newName.length > 15) {
+      setState(() => _editError = 'Nazwa nie może mieć więcej niż 15 znaków');
       return;
     }
     final ok = provider.editCategory(_editingName!, newName);
