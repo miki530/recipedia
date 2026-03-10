@@ -22,7 +22,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   bool _addedToCart = false;
 
   void _toggleStep(int i) => setState(() {
-        _checkedSteps.contains(i) ? _checkedSteps.remove(i) : _checkedSteps.add(i);
+        _checkedSteps.contains(i)
+            ? _checkedSteps.remove(i)
+            : _checkedSteps.add(i);
       });
 
   void _toggleIngredient(int i) => setState(() {
@@ -43,9 +45,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       );
     }
 
-    final stepProgress = recipe.steps.isEmpty
-        ? 1.0
-        : _checkedSteps.length / recipe.steps.length;
+    final stepProgress =
+        recipe.steps.isEmpty ? 1.0 : _checkedSteps.length / recipe.steps.length;
 
     return Scaffold(
       backgroundColor: kBgLight,
@@ -80,7 +81,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                   child: Icon(
                     recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: recipe.isFavorite ? const Color(0xFFEF4444) : kTextMuted,
+                    color: recipe.isFavorite
+                        ? const Color(0xFFEF4444)
+                        : kTextMuted,
                     size: 22,
                   ),
                 ),
@@ -116,7 +119,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 children: [
                   // Category + title
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: kOrangeLight,
                       borderRadius: BorderRadius.circular(20),
@@ -124,13 +128,17 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     child: Text(
                       recipe.categories.join(' • '),
                       style: const TextStyle(
-                          fontSize: 12, color: Color(0xFFC2410C), fontWeight: FontWeight.w600),
+                          fontSize: 12,
+                          color: Color(0xFFC2410C),
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(recipe.title,
                       style: const TextStyle(
-                          fontSize: 26, fontWeight: FontWeight.w700, color: kTextDark)),
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: kTextDark)),
                   const SizedBox(height: 8),
                   Text(recipe.description,
                       style: const TextStyle(
@@ -138,20 +146,35 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   const SizedBox(height: 16),
 
                   // Stats grid
-                  GridView.count(
-                    crossAxisCount: 4,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 2,
-                    childAspectRatio: 0.9,
-                    children: [
-                      _statCard(Icons.access_time, 'Przygotowanie', '${recipe.prepTime} min', kOrange),
-                      _statCard(Icons.timer_outlined, 'Gotowanie', '${recipe.cookTime} min', kOrange),
-                      _statCard(Icons.people_outline, 'Porcje', '${recipe.servings} os.', kOrange),
-                      _statCard(Icons.restaurant_menu, 'Trudność', recipe.difficulty,
-                          difficultyColor(recipe.difficulty)),
-                    ],
+                  DecoratedBox(
+
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(20), color: Color(0xffffffff)),
+                    child: Align(
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        padding: EdgeInsets.all(5),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 15,
+                        childAspectRatio: 2,
+                        children: [
+                          _statCard(Icons.access_time, 'Przygotowanie',
+                              '${recipe.prepTime} min', kOrange),
+                          _statCard(Icons.timer_outlined, 'Gotowanie',
+                              '${recipe.cookTime} min', kOrange),
+                          _statCard(Icons.people_outline, 'Porcje',
+                              '${recipe.servings} os.', kOrange),
+                          _statCard(
+                              Icons.restaurant_menu,
+                              'Trudność',
+                              recipe.difficulty,
+                              difficultyColor(recipe.difficulty)),
+                        ],
+                      ),
+                      alignment: Alignment.topCenter,
+                    ),
                   ),
                   const SizedBox(height: 12),
 
@@ -164,7 +187,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           label: 'Edytuj',
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (_) => RecipeFormScreen(recipeId: recipe.id)),
+                                builder: (_) =>
+                                    RecipeFormScreen(recipeId: recipe.id)),
                           ),
                           gradient: true,
                         ),
@@ -172,7 +196,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: _actionButton(
-                          icon: _confirmDelete ? Icons.warning_amber : Icons.delete_outline,
+                          icon: _confirmDelete
+                              ? Icons.warning_amber
+                              : Icons.delete_outline,
                           label: _confirmDelete ? 'Potwierdź' : 'Usuń',
                           onTap: () {
                             if (_confirmDelete) {
@@ -180,11 +206,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               Navigator.of(context).pop();
                             } else {
                               setState(() => _confirmDelete = true);
-                              Future.delayed(const Duration(seconds: 4),
-                                  () => mounted ? setState(() => _confirmDelete = false) : null);
+                              Future.delayed(
+                                  const Duration(seconds: 4),
+                                  () => mounted
+                                      ? setState(() => _confirmDelete = false)
+                                      : null);
                             }
                           },
-                          color: _confirmDelete ? const Color(0xFFDC2626) : kTextMuted,
+                          color: _confirmDelete
+                              ? const Color(0xFFDC2626)
+                              : kTextMuted,
                         ),
                       ),
                     ],
@@ -196,25 +227,32 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     header: Row(
                       children: [
                         const Text('Składniki',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: kTextDark)),
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: kTextDark)),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: kOrangeLight,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text('${recipe.ingredients.length} pozycji',
-                              style: const TextStyle(fontSize: 11, color: Color(0xFFC2410C))),
+                              style: const TextStyle(
+                                  fontSize: 11, color: Color(0xFFC2410C))),
                         ),
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            final shoppingProvider = context.read<ShoppingListProvider>();
+                            final shoppingProvider =
+                                context.read<ShoppingListProvider>();
                             final toAdd = recipe.ingredients
                                 .asMap()
                                 .entries
-                                .where((e) => !_checkedIngredients.contains(e.key))
+                                .where(
+                                    (e) => !_checkedIngredients.contains(e.key))
                                 .map((e) => e.value)
                                 .toList();
                             shoppingProvider.addItems(
@@ -223,15 +261,20 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               fromRecipeName: recipe.title,
                             );
                             setState(() => _addedToCart = true);
-                            Future.delayed(const Duration(seconds: 3),
-                                () => mounted ? setState(() => _addedToCart = false) : null);
+                            Future.delayed(
+                                const Duration(seconds: 3),
+                                () => mounted
+                                    ? setState(() => _addedToCart = false)
+                                    : null);
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
                               gradient: _addedToCart ? null : kOrangeGradient,
-                              color: _addedToCart ? const Color(0xFFF0FDF4) : null,
+                              color:
+                                  _addedToCart ? const Color(0xFFF0FDF4) : null,
                               borderRadius: BorderRadius.circular(10),
                               border: _addedToCart
                                   ? Border.all(color: const Color(0xFF86EFAC))
@@ -241,16 +284,22 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  _addedToCart ? Icons.check : Icons.shopping_cart_outlined,
+                                  _addedToCart
+                                      ? Icons.check
+                                      : Icons.shopping_cart_outlined,
                                   size: 14,
-                                  color: _addedToCart ? const Color(0xFF16A34A) : Colors.white,
+                                  color: _addedToCart
+                                      ? const Color(0xFF16A34A)
+                                      : Colors.white,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   _addedToCart ? 'Dodano!' : 'Do listy',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: _addedToCart ? const Color(0xFF16A34A) : Colors.white,
+                                    color: _addedToCart
+                                        ? const Color(0xFF16A34A)
+                                        : Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -279,11 +328,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     header: Row(
                       children: [
                         const Text('Przygotowanie',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: kTextDark)),
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: kTextDark)),
                         const Spacer(),
                         Text(
                           '${_checkedSteps.length}/${recipe.steps.length} kroków',
-                          style: const TextStyle(fontSize: 12, color: Color(0xFFC2410C)),
+                          style: const TextStyle(
+                              fontSize: 12, color: Color(0xFFC2410C)),
                         ),
                       ],
                     ),
@@ -295,7 +348,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           child: LinearProgressIndicator(
                             value: stepProgress,
                             backgroundColor: kOrangeBorder,
-                            valueColor: const AlwaysStoppedAnimation<Color>(kDarkOrange),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                kDarkOrange),
                             minHeight: 6,
                           ),
                         ),
@@ -313,7 +367,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           number: i + 1,
                         );
                       }),
-                      if (_checkedSteps.length == recipe.steps.length && recipe.steps.isNotEmpty)
+                      if (_checkedSteps.length == recipe.steps.length &&
+                          recipe.steps.isNotEmpty)
                         Container(
                           margin: const EdgeInsets.only(top: 10),
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -324,7 +379,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           child: const Center(
                             child: Text('🎉 Gotowe! Smacznego!',
                                 style: TextStyle(
-                                    color: Color(0xFF16A34A), fontWeight: FontWeight.w600)),
+                                    color: Color(0xFF16A34A),
+                                    fontWeight: FontWeight.w600)),
                           ),
                         ),
                     ],
@@ -340,35 +396,35 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Widget _statCard(IconData icon, String label, String value, Color color) {
-  return Container(
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: kOrangeLight,
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(height: 4),
-        Text(label,
-            style: const TextStyle(fontSize: 9, color: kTextMuted),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis),
-        const SizedBox(height: 2),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(value,
-              style: TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.w700, color: color),
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: kOrangeLight,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 25),
+          const SizedBox(height: 4),
+          Text(label,
+              style: const TextStyle(fontSize: 8, color: kTextMuted),
               textAlign: TextAlign.center,
-              maxLines: 1),
-        ),
-      ],
-    ),
-  );
-}
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(value,
+                style: TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.w700, color: color),
+                textAlign: TextAlign.center,
+                maxLines: 1),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _actionButton({
     required IconData icon,
@@ -390,7 +446,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: gradient ? Colors.white : color ?? kTextMuted),
+            Icon(icon,
+                size: 18, color: gradient ? Colors.white : color ?? kTextMuted),
             const SizedBox(width: 6),
             Text(
               label,
@@ -416,7 +473,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kCardBorder),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,7 +523,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       ? const Icon(Icons.check, size: 14, color: Colors.white)
                       : Text('$number',
                           style: const TextStyle(
-                              fontSize: 11, color: Colors.white, fontWeight: FontWeight.w700)),
+                              fontSize: 11,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700)),
                 ),
               )
             else
@@ -497,7 +558,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     if (imageStr.isEmpty) {
       return Container(
         color: kOrangeLight,
-        child: const Center(child: Icon(Icons.restaurant, size: 64, color: kOrangeMid)),
+        child: const Center(
+            child: Icon(Icons.restaurant, size: 64, color: kOrangeMid)),
       );
     }
     if (imageStr.startsWith('data:image')) {
