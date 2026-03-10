@@ -78,7 +78,7 @@ class RecipeCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          recipe.category,
+                          recipe.categories.join(' • '),
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,

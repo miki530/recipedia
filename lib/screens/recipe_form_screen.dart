@@ -20,7 +20,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   final _descriptionController = TextEditingController();
   final _tagController = TextEditingController();
 
-  String _category = 'Obiad';
+  List<String> _selectedCategories = ['Obiad'];
   int _prepTime = 15;
   int _cookTime = 30;
   int _servings = 4;
@@ -30,6 +30,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   String _image = '';
   List<String> _tags = [];
   bool _isFavorite = false;
+  String? _originalCreatedAt;
 
   Map<String, String> _errors = {};
 
@@ -49,7 +50,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       setState(() {
         _titleController.text = recipe.title;
         _descriptionController.text = recipe.description;
-        _category = recipe.category;
+        _originalCreatedAt = recipe.createdAt;
+        _selectedCategories = List.from(recipe.categories);
         _prepTime = recipe.prepTime;
         _cookTime = recipe.cookTime;
         _servings = recipe.servings;
@@ -91,7 +93,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       id: widget.recipeId ?? '',
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
-      category: _category,
+      categories: _selectedCategories.isEmpty ? ['Inne'] : _selectedCategories,
       prepTime: _prepTime,
       cookTime: _cookTime,
       servings: _servings,
@@ -99,7 +101,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       ingredients: _ingredients.where((i) => i.trim().isNotEmpty).toList(),
       steps: _steps.where((s) => s.trim().isNotEmpty).toList(),
       image: _image,
-      createdAt: DateTime.now().toIso8601String(),
+      createdAt: _originalCreatedAt ?? DateTime.now().toIso8601String(),
       isFavorite: _isFavorite,
     );
 
@@ -182,14 +184,22 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                   error: _errors['description'],
                 ),
                 const SizedBox(height: 14),
-                _label('Kategoria'),
+                _label('Kategoria (możesz wybrać kilka)'),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: categories.map((cat) {
-                    final selected = _category == cat;
+                    final selected = _selectedCategories.contains(cat);
                     return GestureDetector(
-                      onTap: () => setState(() => _category = cat),
+                      onTap: () => setState(() {
+                        if (selected) {
+                          if (_selectedCategories.length > 1) {
+                            _selectedCategories.remove(cat);
+                          }
+                        } else {
+                          _selectedCategories.add(cat);
+                        }
+                      }),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 150),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -198,13 +208,23 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                           color: selected ? null : kOrangeLight,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text(
-                          cat,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: selected ? Colors.white : const Color(0xFFC2410C),
-                            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (selected)
+                              const Padding(
+                                padding: EdgeInsets.only(right: 4),
+                                child: Icon(Icons.check, size: 13, color: Colors.white),
+                              ),
+                            Text(
+                              cat,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: selected ? Colors.white : const Color(0xFFC2410C),
+                                fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -676,6 +696,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         TextFormField(
           initialValue: value.toString(),
           keyboardType: TextInputType.number,
+          maxLength: 4,
+          buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
           style: const TextStyle(fontSize: 14, color: kTextDark),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

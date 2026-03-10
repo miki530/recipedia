@@ -122,7 +122,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      recipe.category,
+                      recipe.categories.join(' • '),
                       style: const TextStyle(
                           fontSize: 12, color: Color(0xFFC2410C), fontWeight: FontWeight.w600),
                     ),
@@ -211,8 +211,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         GestureDetector(
                           onTap: () {
                             final shoppingProvider = context.read<ShoppingListProvider>();
+                            final toAdd = recipe.ingredients
+                                .asMap()
+                                .entries
+                                .where((e) => !_checkedIngredients.contains(e.key))
+                                .map((e) => e.value)
+                                .toList();
                             shoppingProvider.addItems(
-                              recipe.ingredients,
+                              toAdd,
                               fromRecipeId: recipe.id,
                               fromRecipeName: recipe.title,
                             );
@@ -347,9 +353,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           const SizedBox(height: 4),
           Text(label, style: const TextStyle(fontSize: 9, color: kTextMuted), textAlign: TextAlign.center),
           const SizedBox(height: 2),
-          Text(value,
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
-              textAlign: TextAlign.center),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(value,
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
+                textAlign: TextAlign.center),
+          ),
         ],
       ),
     );

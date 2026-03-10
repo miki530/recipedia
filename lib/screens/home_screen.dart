@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_selectedCategory != 'Wszystkie') {
-      list = list.where((r) => r.category == _selectedCategory).toList();
+      list = list.where((r) => r.categories.contains(_selectedCategory)).toList();
     }
 
     if (_sortBy == 'newest') {

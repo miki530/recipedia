@@ -33,7 +33,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final categories = categoriesProvider.categories;
 
     int recipeCount(String cat) =>
-        recipesProvider.recipes.where((r) => r.category == cat).length;
+        recipesProvider.recipes.where((r) => r.categories.contains(cat)).length;
 
     return Scaffold(
       backgroundColor: kBgLight,
@@ -328,21 +328,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Usunąć?',
-                      style: TextStyle(fontSize: 11, color: Color(0xFFDC2626))),
-                  const SizedBox(width: 6),
                   GestureDetector(
                     onTap: () {
                       categoriesProvider.deleteCategory(cat);
                       setState(() => _deleteConfirm = null);
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: const Color(0xFFDC2626),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text('Tak',
+                      child: const Text('Usuń',
                           style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
                     ),
                   ),
@@ -350,12 +347,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   GestureDetector(
                     onTap: () => setState(() => _deleteConfirm = null),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF3F4F6),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text('Nie',
+                      child: const Text('Anuluj',
                           style: TextStyle(color: Color(0xFF6B7280), fontSize: 11)),
                     ),
                   ),
@@ -445,6 +442,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       setState(() => _editError = 'Taka kategoria już istnieje');
       return;
     }
+    context.read<RecipesProvider>().updateCategoryInRecipes(_editingName!, newName);
     setState(() {
       _editingName = null;
       _editError = '';

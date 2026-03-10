@@ -2,7 +2,7 @@ class Recipe {
   final String id;
   final String title;
   final String description;
-  final String category;
+  final List<String> categories;
   final int prepTime;
   final int cookTime;
   final int servings;
@@ -17,7 +17,7 @@ class Recipe {
     required this.id,
     required this.title,
     required this.description,
-    required this.category,
+    required this.categories,
     required this.prepTime,
     required this.cookTime,
     required this.servings,
@@ -33,7 +33,7 @@ class Recipe {
     String? id,
     String? title,
     String? description,
-    String? category,
+    List<String>? categories,
     int? prepTime,
     int? cookTime,
     int? servings,
@@ -48,7 +48,7 @@ class Recipe {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
-      category: category ?? this.category,
+      categories: categories ?? this.categories,
       prepTime: prepTime ?? this.prepTime,
       cookTime: cookTime ?? this.cookTime,
       servings: servings ?? this.servings,
@@ -65,7 +65,7 @@ class Recipe {
         'id': id,
         'title': title,
         'description': description,
-        'category': category,
+        'categories': categories,
         'prepTime': prepTime,
         'cookTime': cookTime,
         'servings': servings,
@@ -81,7 +81,9 @@ class Recipe {
         id: json['id'] as String,
         title: json['title'] as String,
         description: json['description'] as String,
-        category: json['category'] as String,
+        categories: json.containsKey('categories')
+            ? List<String>.from(json['categories'] as List)
+            : [(json['category'] as String? ?? 'Inne')],
         prepTime: json['prepTime'] as int,
         cookTime: json['cookTime'] as int,
         servings: json['servings'] as int,
@@ -100,7 +102,7 @@ final List<Recipe> sampleRecipes = [
     title: 'Spaghetti Bolognese',
     description:
         'Klasyczne włoskie spaghetti z mięsnym sosem bolońskim. Aromatyczne, sycące danie idealne na rodzinny obiad.',
-    category: 'Obiad',
+    categories: ['Obiad'],
     prepTime: 15,
     cookTime: 45,
     servings: 4,
@@ -133,7 +135,7 @@ final List<Recipe> sampleRecipes = [
     title: 'Zupa pomidorowa',
     description:
         'Tradycyjna polska zupa pomidorowa z ryżem. Kremowa, rozgrzewająca i pełna smaku.',
-    category: 'Zupa',
+    categories: ['Zupa'],
     prepTime: 10,
     cookTime: 30,
     servings: 6,
@@ -164,7 +166,7 @@ final List<Recipe> sampleRecipes = [
     title: 'Ciasto czekoladowe',
     description:
         'Wilgotne i intensywnie czekoladowe ciasto. Idealne na każdą okazję – proste w przygotowaniu.',
-    category: 'Deser',
+    categories: ['Deser'],
     prepTime: 20,
     cookTime: 40,
     servings: 8,
@@ -195,7 +197,7 @@ final List<Recipe> sampleRecipes = [
     title: 'Sałatka z grillowanym kurczakiem',
     description:
         'Lekka i sycąca sałatka z soczyście grillowanym kurczakiem i dressingiem cytrynowym.',
-    category: 'Sałatka',
+    categories: ['Sałatka'],
     prepTime: 20,
     cookTime: 15,
     servings: 2,
@@ -226,7 +228,7 @@ final List<Recipe> sampleRecipes = [
     title: 'Naleśniki z dżemem',
     description:
         'Puchate i cienkie naleśniki – klasyczne śniadanie lub deser z dżemem i śmietaną.',
-    category: 'Śniadanie',
+    categories: ['Śniadanie'],
     prepTime: 10,
     cookTime: 20,
     servings: 4,

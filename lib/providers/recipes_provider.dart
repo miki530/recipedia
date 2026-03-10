@@ -81,4 +81,21 @@ class RecipesProvider extends ChangeNotifier {
       await _save();
     }
   }
+
+  Future<void> updateCategoryInRecipes(String oldName, String newName) async {
+    bool changed = false;
+    for (int i = 0; i < _recipes.length; i++) {
+      final idx = _recipes[i].categories.indexOf(oldName);
+      if (idx != -1) {
+        final updated = List<String>.from(_recipes[i].categories);
+        updated[idx] = newName;
+        _recipes[i] = _recipes[i].copyWith(categories: updated);
+        changed = true;
+      }
+    }
+    if (changed) {
+      notifyListeners();
+      await _save();
+    }
+  }
 }
