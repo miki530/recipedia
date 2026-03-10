@@ -101,7 +101,7 @@ final List<Recipe> sampleRecipes = [
     id: '1',
     title: 'Spaghetti Bolognese',
     description:
-        'Klasyczne włoskie spaghetti z mięsnym sosem bolońskim. Aromatyczne, sycące danie idealne na rodzinny obiad.',
+        'Spaghetti bolognese to wspaniały pomysł na pyszny i jednocześnie wykwintny obiad. Przed szykowaniem spaghetti zachęcam też do przeczytania najpierw całego wpisu. W treści podaję bowiem dużo ciekawych porad dotyczących składników oraz ich zamienników. Być może zapragniesz użyć np. białego wina zamiast czerwonego lub też dodać odrobinę pancetty lub boczku.',
     categories: ['Obiad'],
     prepTime: 15,
     cookTime: 45,
@@ -121,7 +121,7 @@ final List<Recipe> sampleRecipes = [
       '50g parmezanu',
     ],
     steps: [
-      'Ugotuj spaghetti al dente zgodnie z instrukcją na opakowaniu.',
+      'Przygotuj sobie średnią patelnię z grubym dnem. Zacznij ją nagrzewać. Dodaj dwie łyżki oleju do smażenia. Na patelnię wyłóż obraną i drobno posiekaną cebulę. Podsmażaj cebulkę na średniej mocy palnika przez około 8 minut, aż zrobi się rumiana. Po tym czasie dodaj tej dwa ząbki czosnku. Obierz je wcześniej i pokrój w plasterki. Cebulę z czosnkiem podsmażaj jeszcze dwie minuty.',
       'Na rozgrzanej oliwie podsmaż posiekaną cebulę i czosnek przez 3-4 minuty.',
       'Dodaj mięso mielone i smaż do zrumienienia, rozbijając grudki.',
       'Wlej passatę, dopraw solą i pieprzem. Gotuj na wolnym ogniu 30 minut.',

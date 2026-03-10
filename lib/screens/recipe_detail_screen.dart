@@ -143,7 +143,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
+                    crossAxisSpacing: 2,
                     childAspectRatio: 0.9,
                     children: [
                       _statCard(Icons.access_time, 'Przygotowanie', '${recipe.prepTime} min', kOrange),
