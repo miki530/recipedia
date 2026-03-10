@@ -18,7 +18,6 @@ class RecipeFormScreen extends StatefulWidget {
 class _RecipeFormScreenState extends State<RecipeFormScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _tagController = TextEditingController();
 
   List<String> _selectedCategories = ['Obiad'];
   int _prepTime = 15;
@@ -27,8 +26,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   String _difficulty = 'średni';
   List<String> _ingredients = [''];
   List<String> _steps = [''];
+  List<TextEditingController> _ingControllers = [];
+  List<TextEditingController> _stepControllers = [];
   String _image = '';
-  List<String> _tags = [];
   bool _isFavorite = false;
   String? _originalCreatedAt;
 
@@ -39,6 +39,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   @override
   void initState() {
     super.initState();
+    _ingControllers = [TextEditingController()];
+    _stepControllers = [TextEditingController()];
     if (_isEditing) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _loadRecipe());
     }
@@ -47,6 +49,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   void _loadRecipe() {
     final recipe = context.read<RecipesProvider>().getRecipe(widget.recipeId!);
     if (recipe != null) {
+      for (final c in _ingControllers) c.dispose();
+      for (final c in _stepControllers) c.dispose();
       setState(() {
         _titleController.text = recipe.title;
         _descriptionController.text = recipe.description;
@@ -58,6 +62,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         _difficulty = recipe.difficulty;
         _ingredients = List.from(recipe.ingredients);
         _steps = List.from(recipe.steps);
+        _ingControllers = _ingredients.map((v) => TextEditingController(text: v)).toList();
+        _stepControllers = _steps.map((v) => TextEditingController(text: v)).toList();
         _image = recipe.image;
         _isFavorite = recipe.isFavorite;
       });
@@ -68,7 +74,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _tagController.dispose();
+    for (final c in _ingControllers) c.dispose();
+    for (final c in _stepControllers) c.dispose();
     super.dispose();
   }
 
@@ -110,7 +117,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       await provider.updateRecipe(widget.recipeId!, recipe);
       if (mounted) Navigator.of(context).pop();
     } else {
-      final id = await provider.addRecipe(recipe);
+      await provider.addRecipe(recipe);
       if (mounted) Navigator.of(context).pop();
     }
   }
@@ -165,7 +172,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Basic info
             _card(
               title: 'Podstawowe informacje',
               children: [
@@ -240,21 +246,23 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             ),
             const SizedBox(height: 14),
 
-            // Time & servings
             _card(
               title: 'Czas i porcje',
               children: [
-                Row(
-                  children: [
-                    Expanded(child: _numberField('Przygotowanie (min)', _prepTime,
-                        (v) => setState(() => _prepTime = v))),
-                    const SizedBox(width: 10),
-                    Expanded(child: _numberField('Gotowanie (min)', _cookTime,
-                        (v) => setState(() => _cookTime = v))),
-                    const SizedBox(width: 10),
-                    Expanded(child: _numberField('Porcje', _servings,
-                        (v) => setState(() => _servings = v))),
-                  ],
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _numberField('Przygot. (min)', _prepTime,
+                          (v) => setState(() => _prepTime = v))),
+                      const SizedBox(width: 10),
+                      Expanded(child: _numberField('Gotowanie (min)', _cookTime,
+                          (v) => setState(() => _cookTime = v))),
+                      const SizedBox(width: 10),
+                      Expanded(child: _numberField('Porcje', _servings,
+                          (v) => setState(() => _servings = v))),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 14),
                 _label('Poziom trudności'),
@@ -295,7 +303,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             ),
             const SizedBox(height: 14),
 
-            // Ingredients
             _card(
               title: 'Składniki',
               trailing: Text('${_ingredients.where((i) => i.trim().isNotEmpty).length} pozycji',
@@ -307,9 +314,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     child: Text(_errors['ingredients']!,
                         style: const TextStyle(fontSize: 12, color: Color(0xFFDC2626))),
                   ),
-                ..._ingredients.asMap().entries.map((e) {
+                ..._ingControllers.asMap().entries.map((e) {
                   final i = e.key;
                   return Padding(
+                    key: ValueKey('ing_$i'),
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       children: [
@@ -328,27 +336,52 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                           ),
                         ),
                         Expanded(
-                          child: _inlineTextField(
-                            value: _ingredients[i],
-                            hint: 'Składnik ${i + 1}...',
-                            onChanged: (v) => setState(() => _ingredients[i] = v),
-                            onSubmit: () {
-                              setState(() => _ingredients.add(''));
+                          child: TextField(
+                            controller: _ingControllers[i],
+                            style: const TextStyle(fontSize: 13, color: kTextDark),
+                            decoration: InputDecoration(
+                              hintText: 'Składnik ${i + 1}...',
+                              hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: kOrangeBorder),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: kOrange, width: 2),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            onChanged: (v) => _ingredients[i] = v,
+                            onSubmitted: (_) {
+                              setState(() {
+                                _ingredients.add('');
+                                _ingControllers.add(TextEditingController());
+                              });
                             },
                           ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
-                          onPressed: _ingredients.length <= 1
+                          onPressed: _ingControllers.length <= 1
                               ? null
-                              : () => setState(() => _ingredients.removeAt(i)),
+                              : () => setState(() {
+                                  _ingControllers[i].dispose();
+                                  _ingControllers.removeAt(i);
+                                  _ingredients.removeAt(i);
+                                }),
                         ),
                       ],
                     ),
                   );
                 }),
                 GestureDetector(
-                  onTap: () => setState(() => _ingredients.add('')),
+                  onTap: () => setState(() {
+                    _ingredients.add('');
+                    _ingControllers.add(TextEditingController());
+                  }),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
@@ -370,7 +403,6 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             ),
             const SizedBox(height: 14),
 
-            // Steps
             _card(
               title: 'Kroki przygotowania',
               trailing: Text('${_steps.where((s) => s.trim().isNotEmpty).length} kroków',
@@ -382,9 +414,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     child: Text(_errors['steps']!,
                         style: const TextStyle(fontSize: 12, color: Color(0xFFDC2626))),
                   ),
-                ..._steps.asMap().entries.map((e) {
+                ..._stepControllers.asMap().entries.map((e) {
                   final i = e.key;
                   return Padding(
+                    key: ValueKey('step_$i'),
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,26 +437,54 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                           ),
                         ),
                         Expanded(
-                          child: _inlineTextField(
-                            value: _steps[i],
-                            hint: 'Krok ${i + 1}...',
-                            onChanged: (v) => setState(() => _steps[i] = v),
+                          child: TextField(
+                            controller: _stepControllers[i],
                             maxLines: 3,
-                            onSubmit: () => setState(() => _steps.add('')),
+                            minLines: 1,
+                            style: const TextStyle(fontSize: 13, color: kTextDark),
+                            decoration: InputDecoration(
+                              hintText: 'Krok ${i + 1}...',
+                              hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: kOrangeBorder),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(color: kOrange, width: 2),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            onChanged: (v) => _steps[i] = v,
+                            onSubmitted: (_) {
+                              setState(() {
+                                _steps.add('');
+                                _stepControllers.add(TextEditingController());
+                              });
+                            },
                           ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
-                          onPressed: _steps.length <= 1
+                          onPressed: _stepControllers.length <= 1
                               ? null
-                              : () => setState(() => _steps.removeAt(i)),
+                              : () => setState(() {
+                                  _stepControllers[i].dispose();
+                                  _stepControllers.removeAt(i);
+                                  _steps.removeAt(i);
+                                }),
                         ),
                       ],
                     ),
                   );
                 }),
                 GestureDetector(
-                  onTap: () => setState(() => _steps.add('')),
+                  onTap: () => setState(() {
+                    _steps.add('');
+                    _stepControllers.add(TextEditingController());
+                  }),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
@@ -435,87 +496,16 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                       children: [
                         Icon(Icons.add, size: 16, color: Color(0xFFC2410C)),
                         SizedBox(width: 4),
-                        Text('Dodaj krok', style: TextStyle(fontSize: 13, color: Color(0xFFC2410C))),
+                        Text('Dodaj krok',
+                            style: TextStyle(fontSize: 13, color: Color(0xFFC2410C))),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
-
-            // Tags
-            _card(
-              title: 'Tagi',
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _inlineTextField(
-                        value: '',
-                        controller: _tagController,
-                        hint: 'np. włoskie, szybkie...',
-                        onChanged: (_) {},
-                        onSubmit: () {
-                          final tag = _tagController.text.trim().toLowerCase();
-                          if (tag.isNotEmpty && !_tags.contains(tag)) {
-                            setState(() => _tags.add(tag));
-                          }
-                          _tagController.clear();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () {
-                        final tag = _tagController.text.trim().toLowerCase();
-                        if (tag.isNotEmpty && !_tags.contains(tag)) {
-                          setState(() => _tags.add(tag));
-                        }
-                        _tagController.clear();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          gradient: kOrangeGradient,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text('Dodaj',
-                            style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                      ),
-                    ),
-                  ],
-                ),
-                if (_tags.isNotEmpty) ...[
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: _tags.map((tag) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: kOrangeLight,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('#$tag', style: const TextStyle(fontSize: 12, color: Color(0xFFC2410C))),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () => setState(() => _tags.remove(tag)),
-                            child: const Icon(Icons.close, size: 14, color: Color(0xFFC2410C)),
-                          ),
-                        ],
-                      ),
-                    )).toList(),
-                  ),
-                ],
-              ],
-            ),
             const SizedBox(height: 20),
 
-            // Submit buttons
             Row(
               children: [
                 Expanded(
@@ -604,7 +594,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   Widget _label(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(text, style: const TextStyle(fontSize: 13, color: kTextBrown, fontWeight: FontWeight.w500)),
+      child: Text(text,
+          style: const TextStyle(
+              fontSize: 13, color: kTextBrown, fontWeight: FontWeight.w500)),
     );
   }
 
@@ -641,42 +633,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         if (error != null)
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text(error, style: const TextStyle(fontSize: 11, color: Color(0xFFDC2626))),
+            child: Text(error,
+                style: const TextStyle(fontSize: 11, color: Color(0xFFDC2626))),
           ),
       ],
-    );
-  }
-
-  Widget _inlineTextField({
-    required String value,
-    required String hint,
-    required ValueChanged<String> onChanged,
-    int maxLines = 1,
-    VoidCallback? onSubmit,
-    TextEditingController? controller,
-  }) {
-    return TextFormField(
-      controller: controller,
-      initialValue: controller == null ? value : null,
-      maxLines: maxLines,
-      style: const TextStyle(fontSize: 13, color: kTextDark),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kOrangeBorder),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kOrange, width: 2),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      onChanged: onChanged,
-      onFieldSubmitted: (_) => onSubmit?.call(),
     );
   }
 
@@ -684,12 +644,17 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: kTextBrown,
-            fontWeight: FontWeight.w500,
+        SizedBox(
+          height: 30,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              color: kTextBrown,
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 6),
@@ -700,7 +665,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
           buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
           style: const TextStyle(fontSize: 14, color: kTextDark),
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: kOrangeBorder),
@@ -714,9 +679,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
           ),
           onChanged: (v) {
             final parsed = int.tryParse(v);
-            if (parsed != null) {
-              onChanged(parsed);
-            }
+            if (parsed != null) onChanged(parsed);
           },
         ),
       ],

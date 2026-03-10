@@ -340,29 +340,35 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   Widget _statCard(IconData icon, String label, String value, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: kOrangeLight,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 9, color: kTextMuted), textAlign: TextAlign.center),
-          const SizedBox(height: 2),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(value,
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
-                textAlign: TextAlign.center),
-          ),
-        ],
-      ),
-    );
-  }
+  return Container(
+    padding: const EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      color: kOrangeLight,
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 4),
+        Text(label,
+            style: const TextStyle(fontSize: 9, color: kTextMuted),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis),
+        const SizedBox(height: 2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(value,
+              style: TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.w700, color: color),
+              textAlign: TextAlign.center,
+              maxLines: 1),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _actionButton({
     required IconData icon,

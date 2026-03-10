@@ -150,38 +150,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Info banner
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFEF9F5),
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      border: Border.all(color: kCardBorder),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.info_outline, size: 16, color: kOrangeMid),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Kategorie używane w przepisach nie mogą być usunięte.',
-                            style: TextStyle(fontSize: 11, color: kTextMuted),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
 
                   // Category list
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-                      border: Border(
-                        left: BorderSide(color: kCardBorder),
-                        right: BorderSide(color: kCardBorder),
-                        bottom: BorderSide(color: kCardBorder),
-                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: kCardBorder),
                     ),
                     child: categories.isEmpty
                         ? const Padding(
@@ -310,10 +285,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             )
           else
             Expanded(
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(cat, style: const TextStyle(fontSize: 14, color: kTextDark)),
-                  const SizedBox(width: 8),
+                  Text(
+                    cat,
+                    style: const TextStyle(fontSize: 14, color: kTextDark),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   Text(
                     count > 0
                         ? '$count przepis${count == 1 ? '' : count < 5 ? 'y' : 'ów'}'
@@ -330,6 +310,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      context.read<RecipesProvider>().reassignDeletedCategory(cat);
                       categoriesProvider.deleteCategory(cat);
                       setState(() => _deleteConfirm = null);
                     },
@@ -363,25 +344,28 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _editingName = cat;
-                        _editController.text = cat;
-                        _editError = '';
-                        _deleteConfirm = null;
-                      });
-                    },
+                    onTap: cat == kFallbackCategory
+                        ? null
+                        : () {
+                            setState(() {
+                              _editingName = cat;
+                              _editController.text = cat;
+                              _editError = '';
+                              _deleteConfirm = null;
+                            });
+                          },
                     child: Container(
                       width: 34,
                       height: 34,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.edit_outlined, size: 18, color: kOrange),
+                      child: Icon(Icons.edit_outlined, size: 18,
+                          color: cat == kFallbackCategory ? const Color(0xFFD6C4BB) : kOrange),
                     ),
                   ),
                   GestureDetector(
-                    onTap: count > 0
+                    onTap: (count > 0 || cat == kFallbackCategory)
                         ? null
                         : () => setState(() {
                               _deleteConfirm = cat;
@@ -396,7 +380,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       child: Icon(
                         Icons.delete_outline,
                         size: 18,
-                        color: count > 0 ? const Color(0xFFD6C4BB) : const Color(0xFFEF4444),
+                        color: (count > 0 || cat == kFallbackCategory)
+                            ? const Color(0xFFD6C4BB)
+                            : const Color(0xFFEF4444),
                       ),
                     ),
                   ),

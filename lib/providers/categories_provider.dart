@@ -5,8 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _kStorageKey = 'recipedia_categories';
 
 const List<String> kDefaultCategories = [
-  'Śniadanie', 'Obiad', 'Kolacja', 'Zupa', 'Sałatka', 'Deser', 'Przekąska', 'Inne',
+  'Śniadanie', 'Obiad', 'Kolacja', 'Zupa', 'Sałatka', 'Deser', 'Przekąska', 'Inne', 'Ogólne',
 ];
+
+const String kFallbackCategory = 'Ogólne';
 
 class CategoriesProvider extends ChangeNotifier {
   List<String> _categories = [];
@@ -29,6 +31,9 @@ class CategoriesProvider extends ChangeNotifier {
     } else {
       _categories = List.from(kDefaultCategories);
     }
+    if (!_categories.contains(kFallbackCategory)) {
+      _categories.add(kFallbackCategory);
+    }
     notifyListeners();
   }
 
@@ -49,6 +54,7 @@ class CategoriesProvider extends ChangeNotifier {
   }
 
   bool editCategory(String oldName, String newName) {
+    if (oldName == kFallbackCategory) return false;
     final trimmed = newName.trim();
     if (trimmed.isEmpty) return false;
     if (trimmed.length > 15) return false;
@@ -63,6 +69,7 @@ class CategoriesProvider extends ChangeNotifier {
   }
 
   void deleteCategory(String name) {
+    if (name == kFallbackCategory) return;
     _categories.remove(name);
     notifyListeners();
     _save();

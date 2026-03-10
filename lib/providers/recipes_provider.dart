@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/recipe.dart';
+import 'categories_provider.dart'; // dodaj tę linię
 
 const _kStorageKey = 'recipedia_recipes';
 
@@ -89,6 +90,41 @@ class RecipesProvider extends ChangeNotifier {
       if (idx != -1) {
         final updated = List<String>.from(_recipes[i].categories);
         updated[idx] = newName;
+        _recipes[i] = _recipes[i].copyWith(categories: updated);
+        changed = true;
+      }
+    }
+    if (changed) {
+      notifyListeners();
+      await _save();
+    }
+  }
+
+  Future<void> removeCategoryFromRecipes(String categoryName) async {
+    bool changed = false;
+    for (int i = 0; i < _recipes.length; i++) {
+      if (_recipes[i].categories.contains(categoryName)) {
+        final updated = List<String>.from(_recipes[i].categories)
+          ..remove(categoryName);
+        _recipes[i] = _recipes[i].copyWith(categories: updated);
+        changed = true;
+      }
+    }
+    if (changed) {
+      notifyListeners();
+      await _save();
+    }
+  }
+
+  Future<void> reassignDeletedCategory(String deletedName) async {
+    bool changed = false;
+    for (int i = 0; i < _recipes.length; i++) {
+      if (_recipes[i].categories.contains(deletedName)) {
+        final updated = List<String>.from(_recipes[i].categories);
+        updated.remove(deletedName);
+        if (updated.isEmpty) {
+          updated.add(kFallbackCategory);
+        }
         _recipes[i] = _recipes[i].copyWith(categories: updated);
         changed = true;
       }

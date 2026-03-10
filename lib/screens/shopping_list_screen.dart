@@ -108,7 +108,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               child: Column(
                 children: [
                   // Progress bar
@@ -252,7 +252,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
 
             return SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -287,6 +287,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                         border: Border.all(color: kCardBorder),
                         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)],
                       ),
+                      clipBehavior: Clip.antiAlias,
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

@@ -180,15 +180,16 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
       ),
       child: Column(
         children: [
-          // Tab bar
-          Row(
-            children: [
-              _tab(0, Icons.camera_alt_outlined, 'Kamera'),
-              _tab(1, Icons.photo_library_outlined, 'Galeria'),
-              _tab(2, Icons.link, 'Link'),
-            ],
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Row(
+              children: [
+                _tab(0, Icons.camera_alt_outlined, 'Kamera'),
+                _tab(1, Icons.photo_library_outlined, 'Galeria'),
+                _tab(2, Icons.link, 'Link'),
+              ],
+            ),
           ),
-          // Tab content
           Padding(
             padding: const EdgeInsets.all(16),
             child: _buildTabContent(),

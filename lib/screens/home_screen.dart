@@ -247,8 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.only(right: index < allCategories.length - 1 ? 8 : 0),
                     child: GestureDetector(
                       onTap: () => setState(() => _selectedCategory = cat),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
+                      child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           gradient: selected ? kOrangeGradient : null,
@@ -257,9 +256,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           border: Border.all(
                             color: selected ? Colors.transparent : kOrangeBorder,
                           ),
-                          boxShadow: selected
-                              ? [BoxShadow(color: kOrange.withOpacity(0.3), blurRadius: 8)]
-                              : [],
                         ),
                         child: Text(
                           cat,
