@@ -13,6 +13,10 @@ const String kFallbackCategory = 'Ogólne';
 class CategoriesProvider extends ChangeNotifier {
   List<String> _categories = [];
 
+  // new initialized flag for async loading
+  bool _initialized = false;
+  bool get initialized => _initialized;
+
   List<String> get categories => _categories;
 
   CategoriesProvider() {
@@ -34,6 +38,8 @@ class CategoriesProvider extends ChangeNotifier {
     if (!_categories.contains(kFallbackCategory)) {
       _categories.add(kFallbackCategory);
     }
+    // mark as initialized before notifying listeners
+    _initialized = true;
     notifyListeners();
   }
 
@@ -80,5 +86,27 @@ class CategoriesProvider extends ChangeNotifier {
     _categories.insert(to, item);
     notifyListeners();
     _save();
+  }
+
+  Future<void> bulkImport(List<String> incoming) async {
+    bool changed = false;
+    for (final name in incoming) {
+      final trimmed = name.trim();
+      if (trimmed.isEmpty) continue;
+      // Nie sprawdzaj limitu 15 znaków przy imporcie — przepis mógł mieć dłuższą nazwę
+      if (_categories.any((c) => c.toLowerCase() == trimmed.toLowerCase())) continue;
+      // Wstaw przed kFallbackCategory żeby "Ogólne" zawsze było na końcu
+      final fallbackIdx = _categories.indexOf(kFallbackCategory);
+      if (fallbackIdx != -1) {
+        _categories.insert(fallbackIdx, trimmed);
+      } else {
+        _categories.add(trimmed);
+      }
+      changed = true;
+    }
+    if (changed) {
+      notifyListeners();
+      await _save();
+    }
   }
 }

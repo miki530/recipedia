@@ -5,6 +5,8 @@ import '../providers/categories_provider.dart';
 import '../models/recipe.dart';
 import '../widgets/image_input_widget.dart';
 import '../theme/app_colors.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class RecipeFormScreen extends StatefulWidget {
   final String? recipeId;
@@ -77,6 +79,209 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     for (final c in _ingControllers) c.dispose();
     for (final c in _stepControllers) c.dispose();
     super.dispose();
+  }
+
+  Future<void> _scanOcr({required bool isIngredients}) async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(width: 36, height: 4,
+                  decoration: BoxDecoration(
+                      color: kOrangeBorder,
+                      borderRadius: BorderRadius.circular(2))),
+              const SizedBox(height: 14),
+              const Text('Skanuj tekst',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kTextDark)),
+              const SizedBox(height: 4),
+              Text(
+                isIngredients
+                    ? 'Skieruj aparat na listę składników'
+                    : 'Skieruj aparat na kroki przepisu',
+                style: const TextStyle(fontSize: 12, color: kTextMuted),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Container(width: 40, height: 40,
+                    decoration: BoxDecoration(gradient: kOrangeGradient,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 20)),
+                title: const Text('Aparat'),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              ListTile(
+                leading: Container(width: 40, height: 40,
+                    decoration: BoxDecoration(color: kOrangeLight,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: const Icon(Icons.photo_library_outlined, color: kOrange, size: 20)),
+                title: const Text('Galeria'),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (source == null) return;
+
+    final picked = await ImagePicker().pickImage(source: source, imageQuality: 90);
+    if (picked == null) return;
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator(color: kOrange)),
+      );
+    }
+
+    final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+    try {
+      final recognized = await textRecognizer.processImage(
+          InputImage.fromFilePath(picked.path));
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
+
+      final rawText = recognized.text.trim();
+      if (rawText.isEmpty) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Nie rozpoznano żadnego tekstu')));
+        return;
+      }
+
+      final parsed = isIngredients
+          ? _parseIngredients(rawText)
+          : _parseSteps(rawText);
+
+      if (parsed.isEmpty) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Nie udało się przetworzyć tekstu')));
+        return;
+      }
+
+      if (!mounted) return;
+      final confirmed = await _showOcrPreviewDialog(parsed, isIngredients: isIngredients);
+      if (confirmed == true && mounted) {
+        setState(() {
+          if (isIngredients) {
+            for (final c in _ingControllers.where((c) => c.text.trim().isEmpty)) c.dispose();
+            _ingControllers.removeWhere((c) => c.text.trim().isEmpty);
+            _ingredients.removeWhere((i) => i.trim().isEmpty);
+            for (final line in parsed) {
+              _ingredients.add(line);
+              _ingControllers.add(TextEditingController(text: line));
+            }
+          } else {
+            for (final c in _stepControllers.where((c) => c.text.trim().isEmpty)) c.dispose();
+            _stepControllers.removeWhere((c) => c.text.trim().isEmpty);
+            _steps.removeWhere((s) => s.trim().isEmpty);
+            for (final step in parsed) {
+              _steps.add(step);
+              _stepControllers.add(TextEditingController(text: step));
+            }
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Błąd OCR: $e')));
+      }
+    } finally {
+      textRecognizer.close();
+    }
+  }
+
+  List<String> _parseIngredients(String text) {
+    return text
+        .split('\n')
+        .map((l) => l.replaceAll(RegExp(r'^\s*[-•*·]\s*'), '').trim())
+        .where((l) => l.length > 1)
+        .toList();
+  }
+
+  List<String> _parseSteps(String text) {
+    // Próbuj wykryć numerowane kroki (1. / 1) / Krok 1)
+    final numPattern = RegExp(r'(?:^|\n)\s*(?:\d+[\.\):]|[Kk]rok\s*\d+[\.:]?)\s*');
+    if (numPattern.hasMatch(text)) {
+      final parts = text.split(RegExp(r'(?=(?:\d+[\.\):]|[Kk]rok\s*\d+))', multiLine: true));
+      return parts
+          .map((p) => p
+              .replaceAll(RegExp(r'^(?:\d+[\.\):]|[Kk]rok\s*\d+[\.:]?)\s*'), '')
+              .replaceAll('\n', ' ')
+              .trim())
+          .where((p) => p.length > 5)
+          .toList();
+    }
+    // Podziel po podwójnych nowych liniach lub dużych literach na początku linii
+    return text
+        .split(RegExp(r'\n{2,}|\n(?=[A-ZŁŻŹĆĄĘÓŚŃ])'))
+        .map((p) => p.replaceAll('\n', ' ').trim())
+        .where((p) => p.length > 5)
+        .toList();
+  }
+
+  Future<bool?> _showOcrPreviewDialog(List<String> items,
+      {required bool isIngredients}) {
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          isIngredients ? 'Rozpoznane składniki' : 'Rozpoznane kroki',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kTextDark),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items.length,
+            itemBuilder: (_, i) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 22, height: 22,
+                    margin: const EdgeInsets.only(right: 8, top: 1),
+                    decoration: const BoxDecoration(
+                        gradient: kOrangeGradient, shape: BoxShape.circle),
+                    child: Center(
+                      child: Text('${i + 1}',
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.white, fontWeight: FontWeight.w700)),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(items[i],
+                        style: const TextStyle(fontSize: 13, color: kTextDark)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Anuluj', style: TextStyle(color: kTextMuted)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Dodaj',
+                style: TextStyle(color: kOrange, fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
   }
 
   bool _validate() {
@@ -392,27 +597,51 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     );
                   },
                 ),
-                GestureDetector(
-                  onTap: () => setState(() {
-                    _ingredients.add('');
-                    _ingControllers.add(TextEditingController());
-                  }),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: kOrangeLight,
-                      borderRadius: BorderRadius.circular(10),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        _ingredients.add('');
+                        _ingControllers.add(TextEditingController());
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: kOrangeLight,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add, size: 16, color: Color(0xFFC2410C)),
+                            SizedBox(width: 4),
+                            Text('Dodaj składnik',
+                                style: TextStyle(fontSize: 13, color: Color(0xFFC2410C))),
+                          ],
+                        ),
+                      ),
                     ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add, size: 16, color: Color(0xFFC2410C)),
-                        SizedBox(width: 4),
-                        Text('Dodaj składnik',
-                            style: TextStyle(fontSize: 13, color: Color(0xFFC2410C))),
-                      ],
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () => _scanOcr(isIngredients: true),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: kOrangeGradient,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.document_scanner_outlined, size: 16, color: Colors.white),
+                            SizedBox(width: 4),
+                            Text('Skanuj OCR',
+                                style: TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -513,27 +742,51 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     );
                   },
                 ),
-                GestureDetector(
-                  onTap: () => setState(() {
-                    _steps.add('');
-                    _stepControllers.add(TextEditingController());
-                  }),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: kOrangeLight,
-                      borderRadius: BorderRadius.circular(10),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        _steps.add('');
+                        _stepControllers.add(TextEditingController());
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: kOrangeLight,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add, size: 16, color: Color(0xFFC2410C)),
+                            SizedBox(width: 4),
+                            Text('Dodaj krok',
+                                style: TextStyle(fontSize: 13, color: Color(0xFFC2410C))),
+                          ],
+                        ),
+                      ),
                     ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add, size: 16, color: Color(0xFFC2410C)),
-                        SizedBox(width: 4),
-                        Text('Dodaj krok',
-                            style: TextStyle(fontSize: 13, color: Color(0xFFC2410C))),
-                      ],
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () => _scanOcr(isIngredients: false),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: kOrangeGradient,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.document_scanner_outlined, size: 16, color: Colors.white),
+                            SizedBox(width: 4),
+                            Text('Skanuj OCR',
+                                style: TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
