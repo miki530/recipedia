@@ -161,9 +161,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         childAspectRatio: 2,
                         children: [
                           _statCard(Icons.access_time, 'Przygotowanie',
-                              '${recipe.prepTime} min', kOrange),
+                              formatTime(recipe.prepTime), kOrange),
                           _statCard(Icons.timer_outlined, 'Gotowanie',
-                              '${recipe.cookTime} min', kOrange),
+                              formatTime(recipe.cookTime), kOrange),
                           _statCard(Icons.people_outline, 'Porcje',
                               '${recipe.servings} os.', kOrange),
                           _statCard(

@@ -314,69 +314,84 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     child: Text(_errors['ingredients']!,
                         style: const TextStyle(fontSize: 12, color: Color(0xFFDC2626))),
                   ),
-                ..._ingControllers.asMap().entries.map((e) {
-                  final i = e.key;
-                  return Padding(
-                    key: ValueKey('ing_$i'),
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: const BoxDecoration(
-                            color: kOrangeLight,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text('${i + 1}',
-                                style: const TextStyle(
-                                    fontSize: 11, color: kOrange, fontWeight: FontWeight.w700)),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _ingControllers[i],
-                            style: const TextStyle(fontSize: 13, color: kTextDark),
-                            decoration: InputDecoration(
-                              hintText: 'Składnik ${i + 1}...',
-                              hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: kOrangeBorder),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: kOrange, width: 2),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
+                ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      if (newIndex > oldIndex) newIndex--;
+                      final ing = _ingredients.removeAt(oldIndex);
+                      _ingredients.insert(newIndex, ing);
+                      final ctrl = _ingControllers.removeAt(oldIndex);
+                      _ingControllers.insert(newIndex, ctrl);
+                    });
+                  },
+                  itemCount: _ingControllers.length,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                      key: ValueKey('ing_$i\_${_ingControllers[i].hashCode}'),
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.drag_handle, size: 18, color: Color(0xFFD6C4BB)),
+                          const SizedBox(width: 6),
+                          Container(
+                            width: 24,
+                            height: 24,
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: const BoxDecoration(
+                              color: kOrangeLight,
+                              shape: BoxShape.circle,
                             ),
-                            onChanged: (v) => _ingredients[i] = v,
-                            onSubmitted: (_) {
-                              setState(() {
-                                _ingredients.add('');
-                                _ingControllers.add(TextEditingController());
-                              });
-                            },
+                            child: Center(
+                              child: Text('${i + 1}',
+                                  style: const TextStyle(
+                                      fontSize: 11, color: kOrange, fontWeight: FontWeight.w700)),
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
-                          onPressed: _ingControllers.length <= 1
-                              ? null
-                              : () => setState(() {
-                                  _ingControllers[i].dispose();
-                                  _ingControllers.removeAt(i);
-                                  _ingredients.removeAt(i);
-                                }),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+                          Expanded(
+                            child: TextField(
+                              controller: _ingControllers[i],
+                              style: const TextStyle(fontSize: 13, color: kTextDark),
+                              decoration: InputDecoration(
+                                hintText: 'Składnik ${i + 1}...',
+                                hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: kOrangeBorder),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: kOrange, width: 2),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              onChanged: (v) => _ingredients[i] = v,
+                              onSubmitted: (_) {
+                                setState(() {
+                                  _ingredients.add('');
+                                  _ingControllers.add(TextEditingController());
+                                });
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
+                            onPressed: _ingControllers.length <= 1
+                                ? null
+                                : () => setState(() {
+                                      _ingControllers[i].dispose();
+                                      _ingControllers.removeAt(i);
+                                      _ingredients.removeAt(i);
+                                    }),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 GestureDetector(
                   onTap: () => setState(() {
                     _ingredients.add('');
@@ -414,72 +429,90 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                     child: Text(_errors['steps']!,
                         style: const TextStyle(fontSize: 12, color: Color(0xFFDC2626))),
                   ),
-                ..._stepControllers.asMap().entries.map((e) {
-                  final i = e.key;
-                  return Padding(
-                    key: ValueKey('step_$i'),
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 24,
-                          height: 24,
-                          margin: const EdgeInsets.only(right: 8, top: 10),
-                          decoration: const BoxDecoration(
-                            gradient: kOrangeGradient,
-                            shape: BoxShape.circle,
+                ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      if (newIndex > oldIndex) newIndex--;
+                      final step = _steps.removeAt(oldIndex);
+                      _steps.insert(newIndex, step);
+                      final ctrl = _stepControllers.removeAt(oldIndex);
+                      _stepControllers.insert(newIndex, ctrl);
+                    });
+                  },
+                  itemCount: _stepControllers.length,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                      key: ValueKey('step_$i\_${_stepControllers[i].hashCode}'),
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Icon(Icons.drag_handle, size: 18, color: Color(0xFFD6C4BB)),
                           ),
-                          child: Center(
-                            child: Text('${i + 1}',
-                                style: const TextStyle(
-                                    fontSize: 11, color: Colors.white, fontWeight: FontWeight.w700)),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _stepControllers[i],
-                            maxLines: 3,
-                            minLines: 1,
-                            style: const TextStyle(fontSize: 13, color: kTextDark),
-                            decoration: InputDecoration(
-                              hintText: 'Krok ${i + 1}...',
-                              hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: kOrangeBorder),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: kOrange, width: 2),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
+                          const SizedBox(width: 6),
+                          Container(
+                            width: 24,
+                            height: 24,
+                            margin: const EdgeInsets.only(right: 8, top: 10),
+                            decoration: const BoxDecoration(
+                              gradient: kOrangeGradient,
+                              shape: BoxShape.circle,
                             ),
-                            onChanged: (v) => _steps[i] = v,
-                            onSubmitted: (_) {
-                              setState(() {
-                                _steps.add('');
-                                _stepControllers.add(TextEditingController());
-                              });
-                            },
+                            child: Center(
+                              child: Text('${i + 1}',
+                                  style: const TextStyle(
+                                      fontSize: 11, color: Colors.white, fontWeight: FontWeight.w700)),
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
-                          onPressed: _stepControllers.length <= 1
-                              ? null
-                              : () => setState(() {
-                                  _stepControllers[i].dispose();
-                                  _stepControllers.removeAt(i);
-                                  _steps.removeAt(i);
-                                }),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
+                          Expanded(
+                            child: TextField(
+                              controller: _stepControllers[i],
+                              maxLines: 3,
+                              minLines: 1,
+                              style: const TextStyle(fontSize: 13, color: kTextDark),
+                              decoration: InputDecoration(
+                                hintText: 'Krok ${i + 1}...',
+                                hintStyle: const TextStyle(color: kTextMuted, fontSize: 12),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: kOrangeBorder),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: kOrange, width: 2),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              onChanged: (v) => _steps[i] = v,
+                              onSubmitted: (_) {
+                                setState(() {
+                                  _steps.add('');
+                                  _stepControllers.add(TextEditingController());
+                                });
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444), size: 20),
+                            onPressed: _stepControllers.length <= 1
+                                ? null
+                                : () => setState(() {
+                                      _stepControllers[i].dispose();
+                                      _stepControllers.removeAt(i);
+                                      _steps.removeAt(i);
+                                    }),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 GestureDetector(
                   onTap: () => setState(() {
                     _steps.add('');

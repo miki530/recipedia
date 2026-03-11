@@ -61,3 +61,12 @@ BoxDecoration orangeButtonDecoration({double radius = 12}) => BoxDecoration(
         ),
       ],
     );
+
+// formats a duration in minutes into a human-friendly string
+// e.g. 45 -> '45 min', 60 -> '1g', 75 -> '1g 15min'
+String formatTime(int minutes) {
+  if (minutes < 60) return '$minutes min';
+  final h = minutes ~/ 60;
+  final m = minutes % 60;
+  return m == 0 ? '${h}g' : '${h}g ${m}min';
+}

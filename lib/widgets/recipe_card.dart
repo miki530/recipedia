@@ -146,7 +146,7 @@ class RecipeCard extends StatelessWidget {
                     children: [
                       const Icon(Icons.access_time, size: 13, color: kTextMuted),
                       const SizedBox(width: 3),
-                      Text('$totalTime min',
+                      Text(formatTime(totalTime),
                           style: const TextStyle(fontSize: 11, color: kTextMuted)),
                       const SizedBox(width: 10),
                       const Icon(Icons.people_outline, size: 13, color: kTextMuted),
