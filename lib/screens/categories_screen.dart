@@ -135,6 +135,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   filled: true,
                                   fillColor: Colors.white,
                                 ),
+                                onChanged: (value) {
+                                  if (value.length >= 15) {
+                                    setState(() => _addError =
+                                        'Nazwa nie może mieć więcej niż 15 znaków');
+                                  } else if (_addError ==
+                                      'Nazwa nie może mieć więcej niż 15 znaków') {
+                                    setState(() => _addError = '');
+                                  }
+                                },
                                 onSubmitted: (_) =>
                                     _handleAdd(categoriesProvider),
                               ),
@@ -296,6 +305,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             filled: true,
                             fillColor: Colors.white,
                           ),
+                          onChanged: (value) {
+                            if (value.length >= 15) {
+                              setState(() => _editError =
+                                  'Nazwa nie może mieć więcej niż 15 znaków');
+                            } else if (_editError ==
+                                'Nazwa nie może mieć więcej niż 15 znaków') {
+                              setState(() => _editError = '');
+                            }
+                          },
                           onSubmitted: (_) => _confirmEdit(categoriesProvider),
                         ),
                       ),
@@ -462,10 +480,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final newName = _editController.text.trim();
     if (newName.isEmpty) {
       setState(() => _editError = 'Nazwa nie może być pusta');
-      return;
-    }
-    if (newName.length > 15) {
-      setState(() => _editError = 'Nazwa nie może mieć więcej niż 15 znaków');
       return;
     }
     final ok = provider.editCategory(_editingName!, newName);
