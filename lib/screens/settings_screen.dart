@@ -27,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
       await ImportExportService.exportRecipes(recipes, categories);
     } catch (e) {
+      if (!mounted) return; // ← dodaj tę linię
       _snack('Błąd eksportu: $e');
     } finally {
       if (mounted) setState(() => _exporting = false);
@@ -35,6 +36,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _import() async {
     setState(() => _importing = true);
+    // Odczytaj providery PRZED pierwszym await
+    final recipesProvider = context.read<RecipesProvider>();
+    final categoriesProvider = context.read<CategoriesProvider>();
     try {
       final result = await ImportExportService.importData();
       if (!mounted) return;
@@ -44,16 +48,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
 
       if (result.categories.isNotEmpty) {
-        await context.read<CategoriesProvider>().bulkImport(result.categories);
+        await categoriesProvider.bulkImport(result.categories);
       }
 
-      final imported = await context.read<RecipesProvider>().bulkImport(result.recipes);
+      final imported = await recipesProvider.bulkImport(result.recipes);
       if (mounted) {
         _snack(imported == 0
             ? 'Wszystkie przepisy już istnieją – nic nie dodano'
             : 'Zaimportowano $imported przepisów ✓');
       }
     } catch (e) {
+      if (!mounted) return;
       _snack('Błąd importu: $e');
     } finally {
       if (mounted) setState(() => _importing = false);

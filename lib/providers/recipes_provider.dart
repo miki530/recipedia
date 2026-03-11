@@ -201,10 +201,10 @@ class RecipesProvider extends ChangeNotifier {
     for (int i = 0; i < incoming.length; i++) {
       final r = incoming[i];
       // Pomiń jeśli istnieje przepis o tym samym tytule i dacie utworzenia
+      // only compare titles; createdAt is always fresh on import
       final isDuplicate = _recipes.any((existing) =>
           existing.title.trim().toLowerCase() ==
-              r.title.trim().toLowerCase() &&
-          existing.createdAt == r.createdAt);
+              r.title.trim().toLowerCase());
       if (isDuplicate) continue;
       _recipes.insert(0, r.copyWith(id: '${base}_imp_$i'));
       imported++;
@@ -214,5 +214,13 @@ class RecipesProvider extends ChangeNotifier {
       await _save();
     }
     return imported;
+  }
+
+  /// returns true if there’s already a recipe with the same title
+  /// (ignores the recipe with [excludeId] when provided)
+  bool titleExists(String title, {String? excludeId}) {
+    return _recipes.any((r) =>
+        r.title.trim().toLowerCase() == title.trim().toLowerCase() &&
+        r.id != excludeId);
   }
 }

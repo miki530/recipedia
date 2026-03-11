@@ -71,18 +71,23 @@ class RecipeCard extends StatelessWidget {
                     Positioned(
                       top: 10,
                       left: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.92),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          recipe.categories.join(' • '),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: kTextBrown,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 200),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.92),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            recipe.categories.join(' • '),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: kTextBrown,
+                            ),
                           ),
                         ),
                       ),

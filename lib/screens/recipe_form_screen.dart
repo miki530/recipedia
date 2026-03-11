@@ -21,6 +21,12 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
+  // controllers for numeric inputs – needed because TextFormField(initialValue)
+  // doesn’t update after setState.
+  final _prepController = TextEditingController();
+  final _cookController = TextEditingController();
+  final _servingsController = TextEditingController();
+
   List<String> _selectedCategories = ['Obiad'];
   int? _prepTime;
   int? _cookTime;
@@ -65,6 +71,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         _prepTime = recipe.prepTime;
         _cookTime = recipe.cookTime;
         _servings = recipe.servings;
+        _prepController.text = recipe.prepTime.toString();
+        _cookController.text = recipe.cookTime.toString();
+        _servingsController.text = recipe.servings.toString();
         _difficulty = recipe.difficulty;
         _ingredients = List.from(recipe.ingredients);
         _steps = List.from(recipe.steps);
@@ -80,6 +89,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _prepController.dispose();
+    _cookController.dispose();
+    _servingsController.dispose();
     for (final c in _ingControllers) {
       c.dispose();
     }
@@ -302,7 +314,17 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
   bool _validate() {
     final errs = <String, String>{};
-    if (_titleController.text.trim().isEmpty) errs['title'] = 'Tytuł jest wymagany';
+    if (_titleController.text.trim().isEmpty) {
+      errs['title'] = 'Tytuł jest wymagany';
+    } else {
+      final provider = context.read<RecipesProvider>();
+      if (provider.titleExists(
+        _titleController.text.trim(),
+        excludeId: widget.recipeId,
+      )) {
+        errs['title'] = 'Przepis o tej nazwie już istnieje';
+      }
+    }
     if (_descriptionController.text.trim().isEmpty) errs['description'] = 'Opis jest wymagany';
     if (_ingredients.where((i) => i.trim().isNotEmpty).isEmpty) {
       errs['ingredients'] = 'Dodaj co najmniej jeden składnik';
@@ -474,13 +496,13 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: _numberField('Przygot. (min)', _prepTime,
+                      Expanded(child: _numberField('Przygot. (min)', _prepController,
                           (v) => setState(() => _prepTime = v))),
                       const SizedBox(width: 10),
-                      Expanded(child: _numberField('Gotowanie (min)', _cookTime,
+                      Expanded(child: _numberField('Gotowanie (min)', _cookController,
                           (v) => setState(() => _cookTime = v))),
                       const SizedBox(width: 10),
-                      Expanded(child: _numberField('Porcje', _servings,
+                      Expanded(child: _numberField('Porcje', _servingsController,
                           (v) => setState(() => _servings = v))),
                     ],
                   ),
@@ -942,7 +964,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     );
   }
 
-  Widget _numberField(String label, int? value, ValueChanged<int?> onChanged) {
+  Widget _numberField(String label, TextEditingController controller, ValueChanged<int?> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -956,8 +978,8 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
           ),
         ),
         const SizedBox(height: 6),
-        TextFormField(
-          initialValue: value != null ? value.toString() : '',
+        TextField(
+          controller: controller,
           keyboardType: TextInputType.number,
           maxLength: 4,
           buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
@@ -977,10 +999,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             filled: true,
             fillColor: Colors.white,
           ),
-          onChanged: (v) {
-            final parsed = int.tryParse(v);
-            onChanged(parsed);
-          },
+          onChanged: (v) => onChanged(int.tryParse(v)),
         ),
       ],
     );

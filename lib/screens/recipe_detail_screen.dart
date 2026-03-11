@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/recipes_provider.dart';
@@ -20,6 +21,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   final Set<int> _checkedIngredients = {};
   bool _confirmDelete = false;
   bool _addedToCart = false;
+
+  // cache for decoded bytes from a base64 image string
+  Uint8List? _cachedImageBytes;
+  String? _cachedImageSrc;
 
   void _toggleStep(int i) => setState(() {
         _checkedSteps.contains(i)
@@ -563,16 +568,20 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       );
     }
     if (imageStr.startsWith('data:image')) {
-      try {
-        final bytes = base64Decode(imageStr.split(',').last);
-        return Image.memory(bytes, fit: BoxFit.cover);
-      } catch (_) {
-        return Container(color: kOrangeLight);
+      if (_cachedImageSrc != imageStr || _cachedImageBytes == null) {
+        try {
+          _cachedImageBytes = base64Decode(imageStr.split(',').last);
+          _cachedImageSrc = imageStr;
+        } catch (_) {
+          return Container(color: kOrangeLight);
+        }
       }
+      return Image.memory(_cachedImageBytes!, fit: BoxFit.cover, gaplessPlayback: true);
     }
     return Image.network(
       imageStr,
       fit: BoxFit.cover,
+      gaplessPlayback: true,
       errorBuilder: (_, __, ___) => Container(color: kOrangeLight),
     );
   }
