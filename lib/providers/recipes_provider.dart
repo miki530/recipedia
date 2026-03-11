@@ -134,4 +134,25 @@ class RecipesProvider extends ChangeNotifier {
       await _save();
     }
   }
+
+  Future<int> bulkImport(List<Recipe> incoming) async {
+    int imported = 0;
+    final base = DateTime.now().millisecondsSinceEpoch;
+    for (int i = 0; i < incoming.length; i++) {
+      final r = incoming[i];
+      // Pomiń jeśli istnieje przepis o tym samym tytule i dacie utworzenia
+      final isDuplicate = _recipes.any((existing) =>
+          existing.title.trim().toLowerCase() ==
+              r.title.trim().toLowerCase() &&
+          existing.createdAt == r.createdAt);
+      if (isDuplicate) continue;
+      _recipes.insert(0, r.copyWith(id: '${base}_imp_$i'));
+      imported++;
+    }
+    if (imported > 0) {
+      notifyListeners();
+      await _save();
+    }
+    return imported;
+  }
 }
