@@ -414,7 +414,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: (count > 0 || cat == kFallbackCategory)
+                    onTap: cat == kFallbackCategory
                         ? null
                         : () => setState(() {
                               _deleteConfirm = cat;
@@ -429,7 +429,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       child: Icon(
                         Icons.delete_outline,
                         size: 18,
-                        color: (count > 0 || cat == kFallbackCategory)
+                        color: cat == kFallbackCategory
                             ? const Color(0xFFD6C4BB)
                             : const Color(0xFFEF4444),
                       ),
