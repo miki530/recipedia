@@ -18,7 +18,7 @@ class FavoritesScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: Colors.white.withOpacity(0.95),
+            backgroundColor: Colors.white.withValues(alpha: 0.95),
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             pinned: true,

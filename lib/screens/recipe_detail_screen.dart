@@ -63,7 +63,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               child: Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.arrow_back, color: kTextDark),
@@ -76,7 +76,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   margin: const EdgeInsets.all(8),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -100,8 +100,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.1),
-                          Colors.black.withOpacity(0.4),
+                          Colors.black.withValues(alpha: 0.1),
+                          Colors.black.withValues(alpha: 0.4),
                         ],
                       ),
                     ),
@@ -149,11 +149,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   DecoratedBox(
 
                     decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(20), color: Color(0xffffffff)),
+                        BoxDecoration(borderRadius: BorderRadius.circular(20), color: const Color(0xffffffff)),
                     child: Align(
+                      alignment: Alignment.topCenter,
                       child: GridView.count(
                         crossAxisCount: 2,
-                        padding: EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 5,
@@ -173,7 +174,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               difficultyColor(recipe.difficulty)),
                         ],
                       ),
-                      alignment: Alignment.topCenter,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -474,7 +474,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kCardBorder),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)
         ],
       ),
       child: Column(

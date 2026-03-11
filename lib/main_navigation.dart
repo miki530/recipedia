@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'providers/shopping_list_provider.dart';
 import 'screens/home_screen.dart';
@@ -43,7 +42,7 @@ class _MainNavigationState extends State<MainNavigation> {
           border: const Border(top: BorderSide(color: kCardBorder, width: 1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, -2),
             ),

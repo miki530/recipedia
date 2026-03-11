@@ -51,8 +51,12 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   void _loadRecipe() {
     final recipe = context.read<RecipesProvider>().getRecipe(widget.recipeId!);
     if (recipe != null) {
-      for (final c in _ingControllers) c.dispose();
-      for (final c in _stepControllers) c.dispose();
+      for (final c in _ingControllers) {
+        c.dispose();
+      }
+      for (final c in _stepControllers) {
+        c.dispose();
+      }
       setState(() {
         _titleController.text = recipe.title;
         _descriptionController.text = recipe.description;
@@ -76,8 +80,12 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    for (final c in _ingControllers) c.dispose();
-    for (final c in _stepControllers) c.dispose();
+    for (final c in _ingControllers) {
+      c.dispose();
+    }
+    for (final c in _stepControllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -151,8 +159,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
 
       final rawText = recognized.text.trim();
       if (rawText.isEmpty) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Nie rozpoznano żadnego tekstu')));
+        }
         return;
       }
 
@@ -161,8 +171,10 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
           : _parseSteps(rawText);
 
       if (parsed.isEmpty) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Nie udało się przetworzyć tekstu')));
+        }
         return;
       }
 
@@ -171,7 +183,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       if (confirmed == true && mounted) {
         setState(() {
           if (isIngredients) {
-            for (final c in _ingControllers.where((c) => c.text.trim().isEmpty)) c.dispose();
+            for (final c in _ingControllers.where((c) => c.text.trim().isEmpty)) {
+              c.dispose();
+            }
             _ingControllers.removeWhere((c) => c.text.trim().isEmpty);
             _ingredients.removeWhere((i) => i.trim().isEmpty);
             for (final line in parsed) {
@@ -179,7 +193,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
               _ingControllers.add(TextEditingController(text: line));
             }
           } else {
-            for (final c in _stepControllers.where((c) => c.text.trim().isEmpty)) c.dispose();
+            for (final c in _stepControllers.where((c) => c.text.trim().isEmpty)) {
+              c.dispose();
+            }
             _stepControllers.removeWhere((c) => c.text.trim().isEmpty);
             _steps.removeWhere((s) => s.trim().isEmpty);
             for (final step in parsed) {
@@ -486,7 +502,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                               color: selected ? difficultyBg(d) : kOrangeLight,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: selected ? difficultyColor(d).withOpacity(0.5) : Colors.transparent,
+                                color: selected ? difficultyColor(d).withValues(alpha: 0.5) : Colors.transparent,
                                 width: 2,
                               ),
                             ),
@@ -534,7 +550,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                   itemCount: _ingControllers.length,
                   itemBuilder: (context, i) {
                     return Padding(
-                      key: ValueKey('ing_$i\_${_ingControllers[i].hashCode}'),
+                      key: ValueKey('ing_${i}_${_ingControllers[i].hashCode}'),
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
                         children: [
@@ -673,7 +689,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                   itemCount: _stepControllers.length,
                   itemBuilder: (context, i) {
                     return Padding(
-                      key: ValueKey('step_$i\_${_stepControllers[i].hashCode}'),
+                      key: ValueKey('step_${i}_${_stepControllers[i].hashCode}'),
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -823,7 +839,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: kOrange.withOpacity(0.35),
+                            color: kOrange.withValues(alpha: 0.35),
                             blurRadius: 10,
                             offset: const Offset(0, 3),
                           ),
@@ -856,7 +872,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kCardBorder),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

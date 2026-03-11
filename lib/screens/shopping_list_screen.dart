@@ -43,7 +43,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: Colors.white.withOpacity(0.95),
+            backgroundColor: Colors.white.withValues(alpha: 0.95),
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             pinned: true,
@@ -159,7 +159,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: kCardBorder),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)],
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
                     ),
                     child: Row(
                       children: [
@@ -285,7 +285,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: kCardBorder),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8)],
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: ListView.separated(
@@ -407,7 +407,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
               onTap: () => provider.removeItem(item.id),
               child: Padding(
                 padding: const EdgeInsets.only(left: 8),
-                child: Icon(Icons.delete_outline, size: 18, color: Colors.red.withOpacity(0.5)),
+                child: Icon(Icons.delete_outline, size: 18, color: Colors.red.withValues(alpha: 0.5)),
               ),
             ),
         ],

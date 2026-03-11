@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
         slivers: [
           // App Bar
           SliverAppBar(
-            backgroundColor: Colors.white.withOpacity(0.95),
+            backgroundColor: Colors.white.withValues(alpha: 0.95),
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             floating: true,

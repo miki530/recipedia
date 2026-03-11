@@ -55,7 +55,7 @@ BoxDecoration orangeButtonDecoration({double radius = 12}) => BoxDecoration(
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: kOrange.withOpacity(0.3),
+          color: kOrange.withValues(alpha: 0.3),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),

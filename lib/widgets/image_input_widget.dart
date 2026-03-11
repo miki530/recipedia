@@ -110,7 +110,7 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [Colors.black.withOpacity(0.45), Colors.transparent],
+                  colors: [Colors.black.withValues(alpha: 0.45), Colors.transparent],
                 ),
               ),
             ),
@@ -156,7 +156,7 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.85),
+          color: color.withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
