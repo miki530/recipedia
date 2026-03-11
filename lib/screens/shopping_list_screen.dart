@@ -291,6 +291,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
                         itemCount: groupItems.length,
                         separatorBuilder: (_, __) => const Divider(height: 1, color: kCardBorder),
                         itemBuilder: (context, index) {
