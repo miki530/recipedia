@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _kStorageKey = 'recipedia_categories';
 
 const List<String> kDefaultCategories = [
-  'Śniadanie', 'Obiad', 'Kolacja', 'Zupa', 'Sałatka', 'Deser', 'Przekąska', 'Inne', 'Ogólne',
+  'Deser', 'Ogólne',
 ];
 
 const String kFallbackCategory = 'Ogólne';

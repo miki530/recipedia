@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../theme/app_colors.dart';
@@ -21,6 +22,8 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
   int _selectedTab = 0; // 0=camera, 1=gallery, 2=link
   final _urlController = TextEditingController();
   bool _loading = false;
+  Uint8List? _cachedBytes;
+  String? _cachedSrc;
   String _error = '';
 
   @override
@@ -412,17 +415,20 @@ class _ImageInputWidgetState extends State<ImageInputWidget> {
 
   Widget _buildImageWidget(String imageStr) {
     if (imageStr.startsWith('data:image')) {
-      try {
-        final base64Str = imageStr.split(',').last;
-        final bytes = base64Decode(base64Str);
-        return Image.memory(bytes, fit: BoxFit.cover);
-      } catch (_) {
-        return Container(color: kOrangeLight);
+      if (_cachedSrc != imageStr || _cachedBytes == null) {
+        try {
+          _cachedBytes = base64Decode(imageStr.split(',').last);
+          _cachedSrc = imageStr;
+        } catch (_) {
+          return Container(color: kOrangeLight);
+        }
       }
+      return Image.memory(_cachedBytes!, fit: BoxFit.cover, gaplessPlayback: true);
     }
     return Image.network(
       imageStr,
       fit: BoxFit.cover,
+      gaplessPlayback: true,
       errorBuilder: (_, __, ___) => Container(color: kOrangeLight),
     );
   }

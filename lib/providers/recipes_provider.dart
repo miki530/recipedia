@@ -24,10 +24,70 @@ class RecipesProvider extends ChangeNotifier {
         final list = jsonDecode(stored) as List;
         _recipes = list.map((e) => Recipe.fromJson(e as Map<String, dynamic>)).toList();
       } catch (_) {
-        _recipes = List.from(sampleRecipes);
+        _recipes = [
+          Recipe(
+            id: 'default_1',
+            title: 'Naleśniki z dżemem',
+            description: 'Puchate i cienkie naleśniki – klasyczne śniadanie lub deser z dżemem i śmietaną.',
+            categories: ['Deser'],
+            prepTime: 10,
+            cookTime: 20,
+            servings: 4,
+            difficulty: 'łatwy',
+            image: 'https://images.unsplash.com/photo-1739897091734-0f4af03cace2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
+            ingredients: [
+              '2 jajka',
+              '500ml mleka',
+              '200g mąki pszennej',
+              '1 łyżka cukru',
+              'szczypta soli',
+              '2 łyżki masła',
+              'dżem truskawkowy do podania',
+            ],
+            steps: [
+              'Zmiksuj jajka z mlekiem, dodaj mąkę, cukier i sól.',
+              'Miksuj do uzyskania gładkiego ciasta.',
+              'Odstaw ciasto na 15-20 minut.',
+              'Smaż cienkie naleśniki po ok. 1 minucie z każdej strony.',
+              'Podawaj z dżemem posypane cukrem pudrem.',
+            ],
+            createdAt: DateTime.now().toIso8601String(),
+            isFavorite: false,
+          ),
+        ];
       }
     } else {
-      _recipes = List.from(sampleRecipes);
+      _recipes = [
+        Recipe(
+          id: 'default_1',
+          title: 'Naleśniki z dżemem',
+          description: 'Puchate i cienkie naleśniki – klasyczne śniadanie lub deser z dżemem i śmietaną.',
+          categories: ['Deser'],
+          prepTime: 10,
+          cookTime: 20,
+          servings: 4,
+          difficulty: 'łatwy',
+          image: 'https://images.unsplash.com/photo-1739897091734-0f4af03cace2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800',
+          ingredients: [
+            '2 jajka',
+            '500ml mleka',
+            '200g mąki pszennej',
+            '1 łyżka cukru',
+            'szczypta soli',
+            '2 łyżki masła',
+            'dżem truskawkowy do podania',
+          ],
+          steps: [
+            'Zmiksuj jajka z mlekiem, dodaj mąkę, cukier i sól.',
+            'Miksuj do uzyskania gładkiego ciasta.',
+            'Odstaw ciasto na 15-20 minut.',
+            'Smaż cienkie naleśniki po ok. 1 minucie z każdej strony.',
+            'Podawaj z dżemem posypane cukrem pudrem.',
+          ],
+          createdAt: DateTime.now().toIso8601String(),
+          isFavorite: false,
+        ),
+      ];
     }
     _initialized = true;
     notifyListeners();

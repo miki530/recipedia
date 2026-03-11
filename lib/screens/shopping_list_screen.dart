@@ -313,85 +313,82 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   }
 
   Widget _buildItem(BuildContext context, ShoppingItem item, ShoppingListProvider provider) {
-    final isEditing = _editingId == item.id;
+  final isEditing = _editingId == item.id;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      color: item.checked ? const Color(0xFFF9FAFB) : Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      child: Row(
-        children: [
-          // Checkbox
-          GestureDetector(
-            onTap: () => provider.toggleItem(item.id),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: item.checked ? const Color(0xFF22C55E) : Colors.white,
-                border: Border.all(
-                  color: item.checked ? const Color(0xFF22C55E) : kOrangeBorder,
-                  width: 2,
-                ),
-              ),
-              child: item.checked
-                  ? const Icon(Icons.check, size: 14, color: Colors.white)
-                  : null,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: isEditing
-                ? Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _editController,
-                          autofocus: true,
-                          style: const TextStyle(fontSize: 14, color: kTextDark),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: kOrangeBorder),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: kOrange, width: 2),
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                          ),
-                          onSubmitted: (v) {
-                            if (v.trim().isNotEmpty) provider.updateItem(item.id, v.trim());
-                            setState(() => _editingId = null);
-                          },
-                        ),
+  return AnimatedContainer(
+    duration: const Duration(milliseconds: 200),
+    color: item.checked ? const Color(0xFFF9FAFB) : Colors.white,
+    child: isEditing
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                const SizedBox(width: 36),
+                Expanded(
+                  child: TextField(
+                    controller: _editController,
+                    autofocus: true,
+                    style: const TextStyle(fontSize: 14, color: kTextDark),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: kOrangeBorder),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.check, color: Color(0xFF22C55E), size: 20),
-                        onPressed: () {
-                          if (_editController.text.trim().isNotEmpty) {
-                            provider.updateItem(item.id, _editController.text.trim());
-                          }
-                          setState(() => _editingId = null);
-                        },
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: kOrange, width: 2),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: kTextMuted, size: 20),
-                        onPressed: () => setState(() => _editingId = null),
-                      ),
-                    ],
-                  )
-                : GestureDetector(
-                    onDoubleTap: () {
-                      setState(() {
-                        _editingId = item.id;
-                        _editController.text = item.name;
-                      });
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    onSubmitted: (v) {
+                      if (v.trim().isNotEmpty) provider.updateItem(item.id, v.trim());
+                      setState(() => _editingId = null);
                     },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.check, color: Color(0xFF22C55E), size: 20),
+                  onPressed: () {
+                    if (_editController.text.trim().isNotEmpty) {
+                      provider.updateItem(item.id, _editController.text.trim());
+                    }
+                    setState(() => _editingId = null);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: kTextMuted, size: 20),
+                  onPressed: () => setState(() => _editingId = null),
+                ),
+              ],
+            ),
+          )
+        : GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => provider.toggleItem(item.id),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: item.checked ? const Color(0xFF22C55E) : Colors.white,
+                      border: Border.all(
+                        color: item.checked ? const Color(0xFF22C55E) : kOrangeBorder,
+                        width: 2,
+                      ),
+                    ),
+                    child: item.checked
+                        ? const Icon(Icons.check, size: 14, color: Colors.white)
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
                     child: Text(
                       item.name,
                       style: TextStyle(
@@ -401,19 +398,31 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                       ),
                     ),
                   ),
-          ),
-          if (!isEditing)
-            GestureDetector(
-              onTap: () => provider.removeItem(item.id),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Icon(Icons.delete_outline, size: 18, color: Colors.red.withValues(alpha: 0.5)),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _editingId = item.id;
+                        _editController.text = item.name;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(Icons.edit_outlined, size: 18, color: kOrange.withValues(alpha: 0.7)),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => provider.removeItem(item.id),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Icon(Icons.delete_outline, size: 18, color: Colors.red.withValues(alpha: 0.5)),
+                    ),
+                  ),
+                ],
               ),
             ),
-        ],
-      ),
-    );
-  }
+          ),
+  );
+}
 
   void _showClearDialog(BuildContext context, ShoppingListProvider provider) {
     showDialog(

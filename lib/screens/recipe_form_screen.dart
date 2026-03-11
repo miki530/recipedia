@@ -22,9 +22,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
   final _descriptionController = TextEditingController();
 
   List<String> _selectedCategories = ['Obiad'];
-  int _prepTime = 15;
-  int _cookTime = 30;
-  int _servings = 4;
+  int? _prepTime;
+  int? _cookTime;
+  int? _servings;
   String _difficulty = 'średni';
   List<String> _ingredients = [''];
   List<String> _steps = [''];
@@ -322,9 +322,9 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       categories: _selectedCategories.isEmpty ? ['Inne'] : _selectedCategories,
-      prepTime: _prepTime,
-      cookTime: _cookTime,
-      servings: _servings,
+      prepTime: _prepTime ?? 0,
+      cookTime: _cookTime ?? 0,
+      servings: _servings ?? 0,
       difficulty: _difficulty,
       ingredients: _ingredients.where((i) => i.trim().isNotEmpty).toList(),
       steps: _steps.where((s) => s.trim().isNotEmpty).toList(),
@@ -942,7 +942,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
     );
   }
 
-  Widget _numberField(String label, int value, ValueChanged<int> onChanged) {
+  Widget _numberField(String label, int? value, ValueChanged<int?> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -950,23 +950,21 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
           height: 30,
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 11,
-              color: kTextBrown,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 11, color: kTextBrown, fontWeight: FontWeight.w500),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 6),
         TextFormField(
-          initialValue: value.toString(),
+          initialValue: value != null ? value.toString() : '',
           keyboardType: TextInputType.number,
           maxLength: 4,
           buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
           style: const TextStyle(fontSize: 14, color: kTextDark),
           decoration: InputDecoration(
+            hintText: '0',
+            hintStyle: const TextStyle(color: kTextMuted, fontSize: 14),
             contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -981,7 +979,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
           ),
           onChanged: (v) {
             final parsed = int.tryParse(v);
-            if (parsed != null) onChanged(parsed);
+            onChanged(parsed);
           },
         ),
       ],
